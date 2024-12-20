@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Modify Link Behavior",
+  "version": "1.0",
+  "description": "Modify specific link behavior to open in a new tab.",
+  "permissions": ["activeTab"],
+  "content_scripts": [
+    {
+      "matches": ["https://support.wmed.edu/LiveTime/WebObjects/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
