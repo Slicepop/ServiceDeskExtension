@@ -38,6 +38,14 @@ function replaceLinks() {
   const links = document.querySelectorAll('a[id^="requestId"]');
   links.forEach((link) => {
     if (!link.dataset.processed) {
+      const listItems = document.querySelectorAll(".accordion-toggle");
+      listItems.forEach((item, index) => {
+        if (index % 2 === 0) {
+          item.style.backgroundColor = "#ffffff";
+        } else {
+          item.style.backgroundColor = "#f0f0f0";
+        }
+      });
       const pTag = document.createElement("p");
       pTag.textContent = link.textContent;
       pTag.style.color = "#06deb7";
