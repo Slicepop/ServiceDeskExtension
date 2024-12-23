@@ -1,42 +1,94 @@
+function fixCSS() {
+  const lists = document.querySelectorAll(".accordion-toggle");
+  lists.forEach((list) => {
+    list.addEventListener("mouseover", () => {
+      list.style.cursor = "default";
+    });
+  });
+  if (window.location.href.includes("New&requestId=")) {
+    if (!document.querySelector('img[alt="Save and Close"]')) {
+      const saveClose = document.createElement("img");
+      saveClose.src = chrome.runtime.getURL("./saveClose.png");
+      saveClose.className = "text-right";
+      saveClose.style.marginLeft = "30px";
+      saveClose.alt = "Save and Close";
+      saveClose.style.width = "35px";
+      saveClose.style.height = "20px";
+      saveClose.style.transform = "scale(1.5)";
+      saveClose.style.outlineStyle = "solid";
+      saveClose.style.outlineWidth = ".15px";
+      saveClose.style.borderRadius = "2.5px";
+      saveClose.style.padding = "2px";
+      const container = document.querySelector(
+        "#request_general_container > div > div.card-header.general-card-header > button"
+      );
+      if (container) {
+        container.append(saveClose);
+      }
+      saveClose.onclick = function () {
+        setTimeout(() => {
+          window.close();
+        }, 1000);
+      };
+    }
+  }
+}
 function replaceLinks() {
   const links = document.querySelectorAll('a[id^="requestId"]');
-
   links.forEach((link) => {
-    const pTag = document.createElement("p");
-    pTag.textContent = link.textContent;
-    pTag.style.color = "#06deb7";
-    pTag.addEventListener("mouseover", () => {
-      // Code to execute when the mouse enters the element
-      pTag.style.textDecoration = "underline";
-    });
-    pTag.addEventListener("mouseout", () => {
-      pTag.style.textDecoration = "none";
-    });
+    if (!link.dataset.processed) {
+      const pTag = document.createElement("p");
+      pTag.textContent = link.textContent;
+      pTag.style.color = "#06deb7";
+      pTag.id = "requestId";
+      pTag.addEventListener("mouseover", () => {
+        pTag.style.textDecoration = "underline";
+        pTag.style.cursor = "pointer";
+      });
+      pTag.addEventListener("mouseout", () => {
+        pTag.style.textDecoration = "none";
+        pTag.style.cursor = "default";
+      });
 
-    pTag.onclick = function () {
-      window.open(
-        "https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=" +
-          link.textContent.trim(),
-        "_blank"
-      );
-      setTimeout(() => {
-        window.focus();
-      }, 1000);
-    };
+      pTag.onclick = function () {
+        window.open(
+          "https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=" +
+            link.textContent.trim(),
+          "_blank"
+        );
+      };
 
-    link.parentNode.replaceChild(pTag, link);
+      link.parentNode.replaceChild(pTag, link);
+      link.dataset.processed = "true";
+    }
   });
 }
 
-const observer = new MutationObserver((mutationsList) => {
-  for (const mutation of mutationsList) {
-    if (mutation.type === "childList" || mutation.type === "subtree") {
-      replaceLinks();
-    }
-  }
+let debounceTimeout;
+const observer = new MutationObserver(() => {
+  clearTimeout(debounceTimeout);
+  debounceTimeout = setTimeout(() => {
+    replaceLinks();
+    fixCSS();
+  }, 100);
 });
 
 observer.observe(document.body, {
   childList: true,
   subtree: true,
 });
+// if (localStorage.getItem("Power") === null) {
+//   localStorage.setItem("Power", true);
+// }
+
+// var on = localStorage.getItem("Power");
+
+// function power() {
+//   if (on) {
+//     on = false;
+//     localStorage.setItem("Power", false);
+//   } else {
+//     on = true;
+//     localStorage.setItem("Power", true);
+//   }
+// }

@@ -4,6 +4,17 @@
   "version": "1.0",
   "description": "Modify specific link behavior to open in a new tab.",
   "permissions": ["activeTab"],
+
+  "action": {
+    "default_popup": "page.html",
+    "default_icon": "favicon.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["saveClose.png"],
+      "matches": ["https://support.wmed.edu/*"]
+    }
+  ],
   "content_scripts": [
     {
       "matches": ["https://support.wmed.edu/LiveTime/WebObjects/*"],
