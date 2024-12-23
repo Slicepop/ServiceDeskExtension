@@ -6,7 +6,6 @@
   "permissions": ["activeTab"],
 
   "action": {
-    "default_popup": "page.html",
     "default_icon": "favicon.png"
   },
   "web_accessible_resources": [
