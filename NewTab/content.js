@@ -18,6 +18,7 @@ function fixCSS() {
       saveClose.style.outlineStyle = "solid";
       saveClose.style.outlineWidth = ".15px";
       saveClose.style.borderRadius = "2.5px";
+      saveClose.style.background = "#393d3e";
       saveClose.style.padding = "2px";
       const container = document.querySelector(
         "#request_general_container > div > div.card-header.general-card-header > button"
