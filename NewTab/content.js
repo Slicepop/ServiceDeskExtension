@@ -31,18 +31,18 @@ function fixCSS() {
         saveClose.style.borderRadius = "2.5px";
         saveClose.style.background = "#393d3e";
         saveClose.style.padding = "2px";
+        const container = document.querySelector(
+          "#request_general_container > div > div.card-header.general-card-header > button"
+        );
+        if (container) {
+          container.append(saveClose);
+        }
+        saveClose.onclick = function () {
+          setTimeout(() => {
+            window.close();
+          }, 1000);
+        };
       }
-      const container = document.querySelector(
-        "#request_general_container > div > div.card-header.general-card-header > button"
-      );
-      if (container) {
-        container.append(saveClose);
-      }
-      saveClose.onclick = function () {
-        setTimeout(() => {
-          window.close();
-        }, 1000);
-      };
     }
   }
 }
