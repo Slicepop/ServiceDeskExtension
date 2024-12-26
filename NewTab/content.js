@@ -1,3 +1,5 @@
+// import { power } from "./page.js";
+
 function fixCSS() {
   const lists = document.querySelectorAll(".accordion-toggle");
   lists.forEach((list) => {
@@ -6,20 +8,30 @@ function fixCSS() {
     });
   });
   if (window.location.href.includes("New&requestId=")) {
+    const saveButton = document.querySelector(
+      "#request_general_container > div > div.card-header.general-card-header > button"
+    );
+    saveButton.onclick = function () {
+      setTimeout(() => {
+        fixCSS();
+      }, 500);
+    };
     if (!document.querySelector('img[alt="Save and Close"]')) {
       const saveClose = document.createElement("img");
-      saveClose.src = chrome.runtime.getURL("./saveClose.png");
-      saveClose.className = "text-right";
-      saveClose.style.marginLeft = "30px";
-      saveClose.alt = "Save and Close";
-      saveClose.style.width = "35px";
-      saveClose.style.height = "20px";
-      saveClose.style.transform = "scale(1.5)";
-      saveClose.style.outlineStyle = "solid";
-      saveClose.style.outlineWidth = ".15px";
-      saveClose.style.borderRadius = "2.5px";
-      saveClose.style.background = "#393d3e";
-      saveClose.style.padding = "2px";
+      if (saveClose) {
+        saveClose.src = chrome.runtime.getURL("./saveClose.png");
+        saveClose.className = "text-right";
+        saveClose.style.marginLeft = "30px";
+        saveClose.alt = "Save and Close";
+        saveClose.style.width = "35px";
+        saveClose.style.height = "20px";
+        saveClose.style.transform = "scale(1.5)";
+        saveClose.style.outlineStyle = "solid";
+        saveClose.style.outlineWidth = ".15px";
+        saveClose.style.borderRadius = "2.5px";
+        saveClose.style.background = "#393d3e";
+        saveClose.style.padding = "2px";
+      }
       const container = document.querySelector(
         "#request_general_container > div > div.card-header.general-card-header > button"
       );
@@ -48,7 +60,7 @@ function replaceLinks() {
       });
       const pTag = document.createElement("p");
       pTag.textContent = link.textContent;
-      pTag.style.color = "#06deb7";
+      pTag.style.color = "#07ada1";
       pTag.id = "requestId";
       pTag.addEventListener("mouseover", () => {
         pTag.style.textDecoration = "underline";
@@ -86,18 +98,3 @@ observer.observe(document.body, {
   childList: true,
   subtree: true,
 });
-// if (localStorage.getItem("Power") === null) {
-//   localStorage.setItem("Power", true);
-// }
-
-// var on = localStorage.getItem("Power");
-
-// function power() {
-//   if (on) {
-//     on = false;
-//     localStorage.setItem("Power", false);
-//   } else {
-//     on = true;
-//     localStorage.setItem("Power", true);
-//   }
-// }
