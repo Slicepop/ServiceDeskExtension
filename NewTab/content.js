@@ -84,11 +84,21 @@ function replaceLinks() {
     }
   });
 }
-
+const successMSG = document.querySelector("#request_success_msg");
+function removeConfirmation() {
+  if (successMSG.style.display == "block") {
+    setTimeout(() => {
+      document.querySelector('em[data-dismiss="modal"]').click();
+    }, 300);
+  }
+}
 let debounceTimeout;
 const observer = new MutationObserver(() => {
   clearTimeout(debounceTimeout);
   debounceTimeout = setTimeout(() => {
+    if (successMSG) {
+      removeConfirmation();
+    }
     replaceLinks();
     fixCSS();
   }, 100);
