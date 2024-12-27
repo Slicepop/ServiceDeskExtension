@@ -9,11 +9,23 @@ function fixCSS() {
     const saveButton = document.querySelector(
       "#request_general_container > div > div.card-header.general-card-header > button"
     );
+
     saveButton.onclick = function () {
       setTimeout(() => {
         fixCSS();
-      }, 500);
+      }, 200);
     };
+
+    const addNoteButton = document.querySelector(
+      "button.btn.btn-primary.footer-button"
+    );
+    if (addNoteButton) {
+      addNoteButton.onclick = function () {
+        setTimeout(() => {
+          fixCSS();
+        }, 200);
+      };
+    }
     if (!document.querySelector('img[alt="Save and Close"]')) {
       const saveClose = document.createElement("img");
       if (saveClose) {
@@ -34,12 +46,14 @@ function fixCSS() {
         "#request_general_container > div > div.card-header.general-card-header > button"
       );
       if (container) {
-        container.append(saveClose);
+        if (saveClose) {
+          container.append(saveClose);
+        }
       }
       saveClose.onclick = function () {
         setTimeout(() => {
           window.close();
-        }, 1000);
+        }, 800);
       };
     }
   }
@@ -109,7 +123,6 @@ function removeConfirmation() {
     }, 300);
   }
 }
-
 // Observes changes and runs on each change, if ran in the last 300 milliseconds it doesn't run to avoid loading hang
 let debounceTimeout;
 const observer = new MutationObserver(() => {
@@ -120,7 +133,7 @@ const observer = new MutationObserver(() => {
     }
     replaceLinks();
     fixCSS();
-  }, 300);
+  }, 200);
 });
 
 observer.observe(document.body, {
