@@ -12,4 +12,4 @@ Click the Load unpacked button and select the NewTab Folder
 
 Once loaded, you will need to refresh the service page.
 
-_The greatest extension not in the app store - wmed employee" - Richard Graziano_
+_"The greatest extension not in the app store - wmed employee" - Richard Graziano_
