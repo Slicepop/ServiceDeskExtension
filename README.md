@@ -22,6 +22,7 @@
 
 - New Save And Close button option that will save and close after a delay of 1 second
 - Change title of tab to be the subject title
+- Change Description box to be resizable
 
 <br>
 <br>

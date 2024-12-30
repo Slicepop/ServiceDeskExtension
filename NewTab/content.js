@@ -15,6 +15,17 @@ if (incident) {
 
 if (window.location.href.includes("New&requestId=")) {
   document.title = document.querySelector("#request-subject-text").textContent;
+  const descriptionArea = document.querySelector(
+    "#description-tab > div.ml-2.description-box"
+  );
+  const readMore = document.querySelector("#more_less_link");
+  if (readMore) {
+    readMore.click();
+  }
+  descriptionArea.style.resize = "vertical"; // Enable resizing both directions
+  descriptionArea.style.overflow = "auto"; // Ensure scrolling works
+  descriptionArea.style.maxHeight = "1000px";
+  descriptionArea.style.height = "300px";
 }
 
 function fixCSS() {
@@ -39,6 +50,7 @@ function fixCSS() {
         }, 200);
       };
     }
+
     if (!document.querySelector('img[alt="Save and Close"]')) {
       const saveClose = document.createElement("img");
       if (saveClose) {
