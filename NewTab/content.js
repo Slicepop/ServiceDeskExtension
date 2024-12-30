@@ -1,4 +1,4 @@
-// "the greatest extension not in the app store" - wmed employee
+// "the greatest extension not in the app store - wmed employee" - Richard Graziano
 //TODO
 
 /**
