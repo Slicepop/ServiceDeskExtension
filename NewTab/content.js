@@ -58,6 +58,52 @@ function fixCSS() {
     }
   }
 }
+const createRequest = document.querySelector("#createRequestButton");
+const formBody = document.querySelector(
+  "#quickRequestModalBody > form > div.form-group.col-xl-6.col-lg-6.col-md-6.col-sm-12.col-12.mt-3.mb-3.add-customer"
+);
+const phoneMacro = document.createElement("img");
+phoneMacro.style.width = "30px";
+phoneMacro.style.height = "30px";
+phoneMacro.style.background = "#393d3e";
+phoneMacro.id = "phoneMacro";
+formBody.append(phoneMacro);
+phoneMacro.onclick = function () {
+  const inputEvent = new InputEvent("input", {
+    bubbles: true,
+    cancelable: true,
+    composed: true,
+    inputType: "insertText",
+    data: "p", // Match the inserted value
+  });
+  // const parentElement = document.querySelector("#quickCallItemSearch");
+  const itemField = document.querySelector("#item-field");
+  // document.getElementById("exampleRadios2").click();
+  const thirdTable = document.querySelector(
+    "#quickcallselection > zsd-quickcall > section > div.col-lg-12.col-md-12.col-xl-12.col-sm-12.col-12.mb-4.quickcalltable > div > table > tbody"
+  );
+  if (thirdTable) {
+    const thirdTableRow = thirdTable.querySelectorAll("tr")[4];
+    if (thirdTableRow) {
+      thirdTableRow.click();
+    }
+    itemField.addEventListener("keydown", (event) => {
+      console.log("Keydown event fired:", event.key);
+    });
+    itemField.addEventListener("input", (event) => {
+      console.log("Input event fired:", event);
+    });
+  }
+  console.log(itemField.tagName); // Should be INPUT or TEXTAREA
+
+  itemField.focus();
+  // itemField.value = "phone";
+  itemField.dispatchEvent(inputEvent);
+};
+function macros() {}
+
+macros();
+
 /**
  * Replaces all anchor elements with IDs starting with "requestId" with styled paragraph elements.
  * The new paragraph elements retain the original text content and have specific styles and event listeners.
