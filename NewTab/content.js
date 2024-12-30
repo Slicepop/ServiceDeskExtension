@@ -5,11 +5,12 @@
  * The "Save and Close" button will close the window after a delay when clicked.
  */
 
-document
-  .querySelector(
-    "#rightpanel > zsd-user-requestlist > div.row.rowoverride > div.mb-3.col-10 > ul > li:nth-child(2) > span"
-  )
-  .click();
+const incident = document.querySelector(
+  "#rightpanel > zsd-user-requestlist > div.row.rowoverride > div.mb-3.col-10 > ul > li:nth-child(2) > span"
+);
+if (incident) {
+  incident.click();
+}
 function fixCSS() {
   if (window.location.href.includes("New&requestId=")) {
     const saveButton = document.querySelector(
