@@ -12,6 +12,11 @@ const incident = document.querySelector(
 if (incident) {
   incident.click();
 }
+
+if (window.location.href.includes("New&requestId=")) {
+  document.title = document.querySelector("#request-subject-text").textContent;
+}
+
 function fixCSS() {
   if (window.location.href.includes("New&requestId=")) {
     const saveButton = document.querySelector(
