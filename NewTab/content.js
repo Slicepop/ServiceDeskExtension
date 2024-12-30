@@ -14,7 +14,10 @@ if (incident) {
 }
 
 if (window.location.href.includes("New&requestId=")) {
-  document.title = document.querySelector("#request-subject-text").textContent;
+  const requestTitle = document.querySelector("#request-subject-text");
+  if (requestTitle) {
+    document.title = requestTitle.textContent;
+  }
   const descriptionArea = document.querySelector(
     "#description-tab > div.ml-2.description-box"
   );
@@ -22,10 +25,12 @@ if (window.location.href.includes("New&requestId=")) {
   if (readMore) {
     readMore.click();
   }
-  descriptionArea.style.resize = "vertical"; // Enable resizing both directions
-  descriptionArea.style.overflow = "auto"; // Ensure scrolling works
-  descriptionArea.style.maxHeight = "1000px";
-  descriptionArea.style.height = "300px";
+  if (descriptionArea) {
+    descriptionArea.style.resize = "vertical"; // Enable resizing both directions
+    descriptionArea.style.overflow = "auto"; // Ensure scrolling works
+    descriptionArea.style.maxHeight = "1000px";
+    descriptionArea.style.height = "300px";
+  }
 }
 
 function fixCSS() {
