@@ -15,16 +15,25 @@ if (incident) {
   incident.click();
 }
 window.onfocus = function () {
-  if (incident) {
-    if (incident.className == "selectedtab") {
-      incident.click();
-    } else {
-      if (myTasks) {
-        myTasks.click();
+  if (localStorage.getItem("refresh") == "true") {
+    if (incident) {
+      if (incident.className == "selectedtab") {
+        localStorage.setItem("refresh", "false");
+        incident.click();
+      } else {
+        if (myTasks) {
+          myTasks.click();
+        }
       }
     }
   }
 };
+window.addEventListener("beforeunload", (event) => {
+  // Display a confirmation dialog
+  event.preventDefault(); // Some browsers require this to show the dialog
+  event.returnValue = ""; // Setting this triggers the dialog in most browsers
+  localStorage.setItem("refresh", "true");
+});
 
 if (window.location.href.includes("New&requestId=")) {
   const requestTitle = document.querySelector("#request-subject-text");
@@ -118,6 +127,10 @@ function fixCSS() {
     }
   }
 }
+if (!localStorage.getItem("refresh")) {
+  localStorage.setItem("refresh", "false");
+}
+
 /**
  * Replaces all anchor elements with IDs starting with "requestId" with styled paragraph elements.
  * The new paragraph elements retain the original text content and have specific styles and event listeners.
