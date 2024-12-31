@@ -28,14 +28,12 @@ window.onfocus = function () {
     }
   }
 };
-window.addEventListener("beforeunload", (event) => {
-  // Display a confirmation dialog
-  event.preventDefault(); // Some browsers require this to show the dialog
-  event.returnValue = ""; // Setting this triggers the dialog in most browsers
-  localStorage.setItem("refresh", "true");
-});
 
 if (window.location.href.includes("New&requestId=")) {
+  window.addEventListener("beforeunload", (event) => {
+    event.preventDefault();
+    localStorage.setItem("refresh", "true");
+  });
   const requestTitle = document.querySelector("#request-subject-text");
   if (requestTitle) {
     if (requestTitle.textContent.length < 64) {
@@ -54,8 +52,8 @@ if (window.location.href.includes("New&requestId=")) {
     readMore.click();
   }
   if (descriptionArea) {
-    descriptionArea.style.resize = "vertical"; // Enable resizing both directions
-    descriptionArea.style.overflow = "auto"; // Ensure scrolling works
+    descriptionArea.style.resize = "vertical";
+    descriptionArea.style.overflow = "auto";
     descriptionArea.style.maxHeight = "1000px";
     descriptionArea.style.height = "300px";
   }
