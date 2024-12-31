@@ -29,7 +29,11 @@ window.onfocus = function () {
 if (window.location.href.includes("New&requestId=")) {
   const requestTitle = document.querySelector("#request-subject-text");
   if (requestTitle) {
-    document.title = requestTitle.textContent;
+    if (requestTitle.textContent.length < 64) {
+      document.title = requestTitle.textContent;
+    } else {
+      document.title = requestTitle.textContent.substring(0, 61) + "...";
+    }
   } else {
     document.title = "ERROR loading title, refresh";
   }
