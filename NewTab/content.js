@@ -54,6 +54,50 @@ if (window.location.href.includes("New&requestId=")) {
 
 function fixCSS() {
   if (window.location.href.includes("New&requestId=")) {
+    const addNote = document.querySelector(
+      "#addnoteModal > div > div:nth-child(1) > div.modal-body.col-lg-12.col-xl-12.col-md-12.col-sm-12.col-12"
+    );
+    if (addNote) {
+      const iframe = document.querySelector(
+        "#tiny-angular_54559819731735658727083_ifr"
+      ); // Use the correct iframe ID or selector
+      if (iframe) {
+        // Wait for iframe content to load
+        iframe.onload = function () {
+          const iframeDocument =
+            iframe.contentDocument || iframe.contentWindow.document;
+
+          if (iframeDocument) {
+            const body = iframeDocument.body; // Access the body of the iframe
+            if (body) {
+              // Add or modify content
+              body.innerHTML +=
+                "<p>This is added content inside the iframe!</p>";
+              console.log("Content added to iframe.");
+            } else {
+              console.error("No <body> found in the iframe document.");
+            }
+          } else {
+            console.error("Could not access iframe document.");
+          }
+        };
+      } else {
+        console.error("Iframe not found.");
+      }
+    }
+
+    // if (addNote) {
+    //   const bodyElement = document.querySelector('body[id="tinymce"]');
+
+    //   if (bodyElement) {
+    //     // Update the content programmatically
+    //     bodyElement.innerHTML =
+    //       "This is new content<br>With line breaks<br>And more text.";
+    //     console.log("Editable content updated.");
+    //   } else {
+    //     console.error("Editable <body> element not found.");
+    //   }
+    // }
     const saveButton = document.querySelector(
       "#request_general_container > div > div.card-header.general-card-header > button"
     );
