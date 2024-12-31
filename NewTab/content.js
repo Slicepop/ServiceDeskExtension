@@ -5,18 +5,33 @@
  * If the current URL includes "New&requestId=", it modifies the behavior of the save button and adds a "Save and Close" button.
  * The "Save and Close" button will close the window after a delay when clicked.
  */
-
+const myTasks = document.querySelector(
+  "#rightpanel > zsd-user-requestlist > div.row.rowoverride > div.mb-3.col-10 > ul > li.requesttypeheader.ml-0"
+);
 const incident = document.querySelector(
   "#rightpanel > zsd-user-requestlist > div.row.rowoverride > div.mb-3.col-10 > ul > li:nth-child(2) > span"
 );
 if (incident) {
   incident.click();
 }
+window.onfocus = function () {
+  if (incident) {
+    if (incident.className == "selectedtab") {
+      incident.click();
+    } else {
+      if (myTasks) {
+        myTasks.click();
+      }
+    }
+  }
+};
 
 if (window.location.href.includes("New&requestId=")) {
   const requestTitle = document.querySelector("#request-subject-text");
   if (requestTitle) {
     document.title = requestTitle.textContent;
+  } else {
+    document.title = "ERROR loading title, refresh";
   }
   const descriptionArea = document.querySelector(
     "#description-tab > div.ml-2.description-box"
