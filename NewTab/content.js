@@ -123,6 +123,11 @@ function fixCSS() {
         }, 800);
       };
     }
+  } else {
+    window.onbeforeunload = null;
+  }
+  if (window.history.pushState) {
+    window.history.pushState(null, "", window.location.href);
   }
 }
 if (!localStorage.getItem("refresh")) {
