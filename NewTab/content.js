@@ -2,7 +2,24 @@
 /**
  * Phone-call, Walk-up, Teams Message Macro
  *    Figure out why I cannot make the incident list to trigger on incidentFelid.value updated
- *
+ *    document.querySelector("#item-field").click() + input event 
+ * 
+isTrusted
+: 
+true
+bubbles
+: 
+true
+cancelBubble
+: 
+false
+cancelable
+: 
+false
+comp
+inputType
+: 
+"insertText"
  * */
 
 /**
