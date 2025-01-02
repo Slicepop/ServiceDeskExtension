@@ -23,8 +23,14 @@
 - New Save And Close button option that will save and close after a delay of 1 second
 - Change title of tab to be the subject title
 - Change Description box to be resizable
+  <br>
 
-<br>
+**If you run into any issues please let me know!**
+
+#### **Known Issues**
+
+Release of 1/2/25 - Working on issue of "Changes you made may not be saved." popup on close
+
 <br>
 <br>
 <br>
