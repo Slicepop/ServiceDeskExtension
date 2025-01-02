@@ -30,10 +30,6 @@ window.onfocus = function () {
 };
 
 if (window.location.href.includes("New&requestId=")) {
-  window.addEventListener("beforeunload", (event) => {
-    event.preventDefault();
-    localStorage.setItem("refresh", "true");
-  });
   const requestTitle = document.querySelector("#request-subject-text");
   if (requestTitle) {
     if (requestTitle.textContent.length < 64) {
@@ -61,6 +57,10 @@ if (window.location.href.includes("New&requestId=")) {
 
 function fixCSS() {
   if (window.location.href.includes("New&requestId=")) {
+    const SaveLoad = document.querySelector("#toast-container > div");
+    if (SaveLoad) {
+      localStorage.setItem("refresh", "true");
+    }
     const saveButton = document.querySelector(
       "#request_general_container > div > div.card-header.general-card-header > button"
     );
@@ -123,8 +123,6 @@ function fixCSS() {
         }, 800);
       };
     }
-  } else {
-    window.onbeforeunload = null;
   }
   if (window.history.pushState) {
     window.history.pushState(null, "", window.location.href);

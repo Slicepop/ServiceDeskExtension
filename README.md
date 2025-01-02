@@ -29,7 +29,7 @@
 
 #### **Known Issues**
 
-Release of 1/2/25 - Working on issue of "Changes you made may not be saved." popup on close
+- Release of 1/2/25 12:33 PM - Issue of "Changes you made may not be saved." popup on close mitigated by changing when request list needs to be refreshed. Now happens when save modal pops up. Removing beforeunload event which triggered said popup
 
 <br>
 <br>
