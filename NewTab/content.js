@@ -29,8 +29,8 @@ window.onfocus = function () {
   }
 };
 
+const requestTitle = document.querySelector("#request-subject-text");
 if (window.location.href.includes("New&requestId=")) {
-  const requestTitle = document.querySelector("#request-subject-text");
   if (requestTitle) {
     if (requestTitle.textContent.length < 64) {
       document.title = requestTitle.textContent;
@@ -50,13 +50,20 @@ if (window.location.href.includes("New&requestId=")) {
   if (descriptionArea) {
     descriptionArea.style.resize = "vertical";
     descriptionArea.style.overflow = "auto";
-    descriptionArea.style.maxHeight = "1000px";
+    descriptionArea.style.maxHeight = "2500px";
     descriptionArea.style.height = "300px";
   }
 }
 
 function fixCSS() {
   if (window.location.href.includes("New&requestId=")) {
+    if (document.title != requestTitle.textContent) {
+      if (requestTitle.textContent.length < 64) {
+        document.title = requestTitle.textContent;
+      } else {
+        document.title = requestTitle.textContent.substring(0, 61) + "...";
+      }
+    }
     const SaveLoad = document.querySelector("#toast-container > div");
     if (SaveLoad) {
       localStorage.setItem("refresh", "true");
