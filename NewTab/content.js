@@ -70,7 +70,13 @@ function addPrivate() {
   const privNote = document.createElement("Input");
   privNote.style.marginRight = "10px";
   privNote.placeholder = "Private Note";
-
+  privNote.style.outlineStyle = "solid";
+  privNote.style.outlineWidth = ".25px";
+  privNote.style.outlineColor = "#63fbf0";
+  privNote.style.color = "#63fbf0";
+  privNote.style.backgroundColor = "rgba(32, 32, 32, 0.8)";
+  privNote.style.borderRadius = "5px";
+  privNote.style.transform = "scale(.85)";
   privNote.value = localStorage.getItem(requestId) || "";
 
   privNote.addEventListener("input", () => {
@@ -99,7 +105,7 @@ if (window.location.href.includes("New&requestId=")) {
   if (descriptionArea) {
     descriptionArea.style.resize = "vertical";
     descriptionArea.style.overflow = "auto";
-    descriptionArea.style.maxHeight = "1000px";
+    descriptionArea.style.maxHeight = "2500px";
     descriptionArea.style.height = "300px";
   }
 }
@@ -209,6 +215,7 @@ function replaceLinks() {
             if (
               td.textContent.trim() == "Open" ||
               td.textContent.trim() == "In Progress" ||
+              td.textContent.trim() == "Waiting for customer" ||
               td.textContent.trim() == "On Hold"
             ) {
               const requestId = trElement
@@ -220,6 +227,13 @@ function replaceLinks() {
                 privateNote.placeholder = "Private Note";
                 privateNote.marginLeft = "10px";
                 privateNote.style.float = "right";
+                privateNote.style.marginTop = "5px";
+                privateNote.style.outlineStyle = "solid";
+                privateNote.style.outlineWidth = ".25px";
+                privateNote.style.outlineColor = "#63fbf0";
+                privateNote.style.color = "#63fbf0";
+                privateNote.style.backgroundColor = "rgba(32, 32, 32, 0.8)";
+                privateNote.style.borderRadius = "5px";
                 td.append(privateNote);
 
                 privateNote.value = localStorage.getItem(requestId) || "";
