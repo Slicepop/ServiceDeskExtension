@@ -16,9 +16,9 @@ if (incident) {
 }
 window.onfocus = function () {
   if (localStorage.getItem("refresh") == "true") {
+    localStorage.setItem("refresh", "false");
     if (incident) {
       if (incident.className == "selectedtab") {
-        localStorage.setItem("refresh", "false");
         incident.click();
       } else {
         if (myTasks) {
@@ -30,16 +30,43 @@ window.onfocus = function () {
 };
 
 const requestTitle = document.querySelector("#request-subject-text");
-if (window.location.href.includes("New&requestId=")) {
+const requestUser = document.querySelector("#customer-search-input");
+function updateTitle() {
   if (requestTitle) {
-    if (requestTitle.textContent.length < 64) {
+    if (
+      requestTitle.textContent.length > 10 &&
+      requestTitle.textContent.length < 64
+    ) {
       document.title = requestTitle.textContent;
+    } else if (requestTitle.textContent.length < 64) {
+      document.title = requestTitle.textContent + " - " + requestUser.value;
     } else {
       document.title = requestTitle.textContent.substring(0, 61) + "...";
     }
   } else {
     document.title = "ERROR loading title, refresh";
   }
+}
+function addPrivate() {
+  const requestId = document.querySelector(
+    "#editRequest > div.card.request-subject.common-subject-description-card.ml-0 > div > div.priority_requestnumber > p.request-number"
+  ).textContent;
+  const privNote = document.createElement("Input");
+  privNote.style.marginRight = "10px";
+  privNote.value = localStorage.getItem(requestId) || "";
+
+  privNote.addEventListener("input", () => {
+    localStorage.setItem(requestId, privNote.value);
+  });
+  document
+    .querySelector(
+      "#editRequest > div.card.request-subject.common-subject-description-card.ml-0 > div > div.request_subject"
+    )
+    .prepend(privNote);
+}
+if (window.location.href.includes("New&requestId=")) {
+  addPrivate();
+  updateTitle();
   const descriptionArea = document.querySelector(
     "#description-tab > div.ml-2.description-box"
   );
@@ -58,11 +85,7 @@ if (window.location.href.includes("New&requestId=")) {
 function fixCSS() {
   if (window.location.href.includes("New&requestId=")) {
     if (document.title != requestTitle.textContent) {
-      if (requestTitle.textContent.length < 64) {
-        document.title = requestTitle.textContent;
-      } else {
-        document.title = requestTitle.textContent.substring(0, 61) + "...";
-      }
+      updateTitle();
     }
     const SaveLoad = document.querySelector("#toast-container > div");
     if (SaveLoad) {
@@ -156,6 +179,46 @@ function replaceLinks() {
     if (!link.dataset.processed) {
       const listItems = document.querySelectorAll(".accordion-toggle");
       listItems.forEach((item, index) => {
+        if (incident.className != "selectedtab") {
+          const trElement = item.querySelector("tr");
+          const tdElements = trElement.querySelectorAll("td");
+          tdElements.forEach((td) => {
+            console.log(td.value);
+            if (
+              td.textContent.trim() == "Open" ||
+              td.textContent.trim() == "In Progress" ||
+              td.textContent.trim() == "On Hold"
+            ) {
+              const requestId = trElement
+                .querySelector("#requestId")
+                .textContent.trim();
+              if (!trElement.querySelector("#private")) {
+                const privateNote = document.createElement("input");
+                privateNote.id = "private";
+                privateNote.marginLeft = "10px";
+                privateNote.style.float = "right";
+                td.append(privateNote);
+
+                privateNote.value = localStorage.getItem(requestId) || "";
+
+                privateNote.addEventListener("input", () => {
+                  localStorage.setItem(requestId, privateNote.value);
+                });
+              }
+              // Remove tickets from local storage that are not in the list
+              const storedKeys = Object.keys(localStorage);
+              storedKeys.forEach((key) => {
+                if (
+                  key.startsWith("requestId") &&
+                  !trElement.querySelector(`#requestId:contains(${key})`)
+                ) {
+                  localStorage.removeItem(key);
+                }
+              });
+            }
+          });
+        }
+
         item.addEventListener("mouseover", () => {
           item.style.cursor = "default";
         });
