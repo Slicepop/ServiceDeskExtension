@@ -47,7 +47,23 @@ function updateTitle() {
     document.title = "ERROR loading title, refresh";
   }
 }
+const requestStatus = document.querySelector(
+  "#request-general-detail > div > div:nth-child(2) > div:nth-child(1) > div > div > div > div:nth-child(13) > div > select"
+);
+const saveButton = document.querySelector(
+  "#request_general_container > div > div.card-header.general-card-header > button"
+);
 function addPrivate() {
+  if (saveButton) {
+    saveButton.onclick = function () {
+      if (
+        requestStatus.value == "Resolved" ||
+        requestStatus.value == "Autoclosed"
+      ) {
+        localStorage.removeItem(requestId);
+      }
+    };
+  }
   const requestId = document.querySelector(
     "#editRequest > div.card.request-subject.common-subject-description-card.ml-0 > div > div.priority_requestnumber > p.request-number"
   ).textContent;
