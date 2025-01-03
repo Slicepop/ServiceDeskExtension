@@ -39,7 +39,12 @@ function updateTitle() {
     ) {
       document.title = requestTitle.textContent;
     } else if (requestTitle.textContent.length < 64) {
-      document.title = requestTitle.textContent + " - " + requestUser.value;
+      document.title = requestTitle.textContent;
+      try {
+        document.title += " - " + requestUser.value;
+      } catch (error) {
+        console.error("Error updating title with user value:", error);
+      }
     } else {
       document.title = requestTitle.textContent.substring(0, 61) + "...";
     }
@@ -209,6 +214,8 @@ function replaceLinks() {
       listItems.forEach((item, index) => {
         if (incident.className != "selectedtab") {
           const trElement = item.querySelector("tr");
+          const tbodyElement = trElement.closest("tbody");
+
           const tdElements = trElement.querySelectorAll("td");
           tdElements.forEach((td) => {
             console.log(td.value);
@@ -221,22 +228,59 @@ function replaceLinks() {
               const requestId = trElement
                 .querySelector("#requestId")
                 .textContent.trim();
-              if (!trElement.querySelector("#private")) {
-                const privateNote = document.createElement("input");
+              if (!tbodyElement.querySelector("textarea")) {
+                const textTD = document.createElement("td");
+                textTD.style.height = "20px";
+                textTD.style.padding = "0px";
+                textTD.colSpan = "10";
+                const privateNote = document.createElement("textarea");
+                textTD.setAttribute("_ngcontent-ng-c4256737322", "");
+                // privateNote.style.height = "30px";
+
+                textTD.append(privateNote);
+                privateNote.value = localStorage.getItem(requestId) || "";
+                privateNote.style.height = "28px";
+                privateNote.style.fields;
                 privateNote.id = "private";
                 privateNote.placeholder = "Private Note";
                 privateNote.marginLeft = "10px";
-                privateNote.style.float = "right";
-                privateNote.style.marginTop = "5px";
+                privateNote.style.float = "left";
                 privateNote.style.outlineStyle = "solid";
+                privateNote.style.minWidth = "50px";
                 privateNote.style.outlineWidth = ".25px";
                 privateNote.style.outlineColor = "#63fbf0";
                 privateNote.style.color = "#63fbf0";
                 privateNote.style.backgroundColor = "rgba(32, 32, 32, 0.8)";
                 privateNote.style.borderRadius = "5px";
-                td.append(privateNote);
+                privateNote.style.whiteSpace = "nowrap";
+                privateNote.style.marginTop = "-5px";
+                privateNote.style.resize = "horizontal";
+                // privateNote.style.transform = "scale(0.8)";
+                const trEl = document.createElement("tr");
+                trEl.setAttribute("_ngcontent-ng-c4256737322", "");
+                trEl.style.boxSizing = "border-box";
+                // privateNote.style.minHeight = "20px";
+                trEl.style.padding = ".25rem";
+                trEl.style.border = "0px";
+                tbodyElement.append(trEl);
+                for (let i = 0; i < 6; i++) {
+                  const emptyTD = document.createElement("td");
+                  emptyTD.textContent = "";
+                  emptyTD.style.padding = "0px";
+                  emptyTD.setAttribute("_ngcontent-ng-c4256737322", "");
+                  // emptyTD.style.transform = "scale(0.8)";
+                  emptyTD.style.height = "10px";
+                  trEl.append(emptyTD);
+                }
+                trEl.append(textTD);
 
-                privateNote.value = localStorage.getItem(requestId) || "";
+                if (privateNote.value === "") {
+                  privateNote.style.width = "80px";
+                } else {
+                  privateNote.style.width = "auto";
+
+                  privateNote.style.width = privateNote.scrollWidth + 5 + "px";
+                }
 
                 privateNote.addEventListener("input", () => {
                   if (privateNote.value === "") {
