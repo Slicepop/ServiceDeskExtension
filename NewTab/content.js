@@ -53,10 +53,16 @@ function addPrivate() {
   ).textContent;
   const privNote = document.createElement("Input");
   privNote.style.marginRight = "10px";
+  privNote.placeholder = "Private Note";
+
   privNote.value = localStorage.getItem(requestId) || "";
 
   privNote.addEventListener("input", () => {
-    localStorage.setItem(requestId, privNote.value);
+    if (privNote.value === "") {
+      localStorage.removeItem(requestId);
+    } else {
+      localStorage.setItem(requestId, privNote.value);
+    }
   });
   document
     .querySelector(
@@ -195,6 +201,7 @@ function replaceLinks() {
               if (!trElement.querySelector("#private")) {
                 const privateNote = document.createElement("input");
                 privateNote.id = "private";
+                privateNote.placeholder = "Private Note";
                 privateNote.marginLeft = "10px";
                 privateNote.style.float = "right";
                 td.append(privateNote);
@@ -202,19 +209,23 @@ function replaceLinks() {
                 privateNote.value = localStorage.getItem(requestId) || "";
 
                 privateNote.addEventListener("input", () => {
-                  localStorage.setItem(requestId, privateNote.value);
+                  if (privateNote.value === "") {
+                    localStorage.removeItem(requestId);
+                  } else {
+                    localStorage.setItem(requestId, privateNote.value);
+                  }
                 });
               }
               // Remove tickets from local storage that are not in the list
               const storedKeys = Object.keys(localStorage);
-              storedKeys.forEach((key) => {
-                if (
-                  key.startsWith("requestId") &&
-                  !trElement.querySelector(`#requestId:contains(${key})`)
-                ) {
-                  localStorage.removeItem(key);
-                }
-              });
+              // storedKeys.forEach((key) => {
+              //   if (
+              //     key.startsWith(requestId) &&
+              //     !document.querySelector(`#requestId:contains(${key})`)
+              //   ) {
+              //     localStorage.removeItem(key);
+              //   }
+              // });
             }
           });
         }
