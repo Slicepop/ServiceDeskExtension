@@ -241,11 +241,13 @@ function replaceLinks() {
                 if (replyMSG_EL) {
                   const replyMSG = replyMSG_EL.querySelector("td.notetext");
                   replyMSG.style.float = "right";
-                  replyMSG.style.marginRight = "20px";
+                  replyMSG.style.marginRight = "85px";
                   replyMSG.style.outlineStyle = "solid";
                   replyMSG.style.outlineWidth = ".25px";
                   replyMSG.style.outlineColor = "#63fbf0";
                   replyMSG.style.borderRadius = "5px";
+                  replyMSG.style.marginTop = "-15px";
+                  replyMSG.style.marginBottom = "-15px";
 
                   tbodyElement.querySelector("tr:nth-child(2)").remove();
                   textTD.append(privateNote);
@@ -269,7 +271,8 @@ function replaceLinks() {
                 privateNote.style.backgroundColor = "rgba(32, 32, 32, 0.8)";
                 privateNote.style.borderRadius = "5px";
                 privateNote.style.whiteSpace = "nowrap";
-                privateNote.style.marginTop = "-5px";
+                privateNote.style.marginTop = "-15px";
+                privateNote.style.marginLeft = "5px";
                 privateNote.style.resize = "horizontal";
                 // privateNote.style.transform = "scale(0.8)";
                 const trEl = document.createElement("tr");
