@@ -236,8 +236,23 @@ function replaceLinks() {
                 const privateNote = document.createElement("textarea");
                 textTD.setAttribute("_ngcontent-ng-c4256737322", "");
                 // privateNote.style.height = "30px";
+                const replyMSG_EL =
+                  tbodyElement.querySelector("tr:nth-child(2)");
+                if (replyMSG_EL) {
+                  const replyMSG = replyMSG_EL.querySelector("td.notetext");
+                  replyMSG.style.float = "right";
+                  replyMSG.style.marginRight = "20px";
+                  replyMSG.style.outlineStyle = "solid";
+                  replyMSG.style.outlineWidth = ".25px";
+                  replyMSG.style.outlineColor = "#63fbf0";
+                  replyMSG.style.borderRadius = "5px";
 
-                textTD.append(privateNote);
+                  tbodyElement.querySelector("tr:nth-child(2)").remove();
+                  textTD.append(privateNote);
+                  textTD.append(replyMSG);
+                } else {
+                  textTD.append(privateNote);
+                }
                 privateNote.value = localStorage.getItem(requestId) || "";
                 privateNote.style.height = "28px";
                 privateNote.style.fields;
@@ -248,6 +263,7 @@ function replaceLinks() {
                 privateNote.style.outlineStyle = "solid";
                 privateNote.style.minWidth = "50px";
                 privateNote.style.outlineWidth = ".25px";
+                privateNote.style.maxWidth = "817px";
                 privateNote.style.outlineColor = "#63fbf0";
                 privateNote.style.color = "#63fbf0";
                 privateNote.style.backgroundColor = "rgba(32, 32, 32, 0.8)";
@@ -263,7 +279,7 @@ function replaceLinks() {
                 trEl.style.padding = ".25rem";
                 trEl.style.border = "0px";
                 tbodyElement.append(trEl);
-                for (let i = 0; i < 6; i++) {
+                for (let i = 0; i < 5; i++) {
                   const emptyTD = document.createElement("td");
                   emptyTD.textContent = "";
                   emptyTD.style.padding = "0px";
