@@ -109,7 +109,6 @@ if (window.location.href.includes("New&requestId=")) {
   }
   if (descriptionArea) {
     document.querySelector("#request-description-text").style.overflow = "auto";
-    descriptionArea.style.overflow = "hidden";
     descriptionArea.style.resize = "vertical";
     descriptionArea.style.minHeight = "80px";
     descriptionArea.style.maxHeight = descriptionArea.scrollHeight + 20 + "px";
@@ -220,7 +219,6 @@ function replaceLinks() {
 
           const tdElements = trElement.querySelectorAll("td");
           tdElements.forEach((td) => {
-            console.log(td.value);
             if (
               td.textContent.trim() == "Open" ||
               td.textContent.trim() == "In Progress" ||
