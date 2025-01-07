@@ -215,30 +215,10 @@ if (!localStorage.getItem("refresh")) {
  * - Adds an onclick event listener to open a new tab with the New&requestId= url.
  * - Marks the original link as processed to avoid duplicate processing.
  */
-const requestIdArray = [];
+requestIdArray = [];
 const search = document.querySelector("#searchText");
 foo = true;
 function replaceLinks() {
-  // if (incident.className != "selectedtab") {
-  //   if (search) {
-  //     if (search.value == "") {
-  //       if (foo) {
-  //         foo = false;
-  //         const storedKeys = Object.keys(localStorage);
-  //         storedKeys.forEach((key) => {
-  //           const value = localStorage.getItem(key);
-  //           if (value && value.startsWith('{"note')) {
-  //             requestIdArray.forEach((requestId) => {
-  //               if (key.includes(requestId)) {
-  //                 console.log(key);
-  //               }
-  //             });
-  //           }
-  //         });
-  //       }
-  //     }
-  //   }
-  // }
   const links = document.querySelectorAll('a[id^="requestId"]');
   links.forEach((link) => {
     if (!link.dataset.processed) {
@@ -253,7 +233,9 @@ function replaceLinks() {
             const requestId = trElement
               .querySelector("#requestId")
               .textContent.trim();
-            requestIdArray.push(requestId);
+            if (!requestIdArray.includes(requestId)) {
+              requestIdArray.push(requestId);
+            }
             if (
               td.textContent.trim() == "Open" ||
               td.textContent.trim() == "In Progress" ||
@@ -353,6 +335,7 @@ function replaceLinks() {
 
                 resizeObserver.observe(privateNote);
                 privateNote.addEventListener("input", () => {
+                  removeUnusedKeys();
                   // if (privateNote.value === "") {
                   //   privateNote.style.height = "30px";
                   // } else {
@@ -434,6 +417,53 @@ function replaceLinks() {
     }
   });
 }
+const test = document.querySelector(
+  "#accordion0 > tr:nth-child(1) > td:nth-child(1) > input[type=checkbox]"
+);
+function removeUnusedKeys() {
+  const search = document.querySelector("#searchText");
+  const incident = document.querySelector(
+    "#rightpanel > zsd-user-requestlist > div.row.rowoverride > div.mb-3.col-10 > ul > li:nth-child(2) > span"
+  );
+  if (incident) {
+    if (incident.className != "selectedtab") {
+      if (search && search.value == "") {
+        const storedKeys = Object.keys(localStorage); // Get all keys from localStorage
+        const requestIdSet = new Set(requestIdArray.map(String)); // Convert requestIdArray to Set of strings
+
+        // First log all the stored keys and compare with the requestIdSet
+        storedKeys.forEach((key) => {
+          const value = localStorage.getItem(key);
+          if (!requestIdSet.has(key) && value.startsWith('{"note')) {
+            localStorage.removeItem(key);
+          }
+        });
+      }
+    }
+  }
+
+  //   if (incident.className != "selectedtab") {
+  //     if (search) {
+  //       if (search.value == "") {
+  //         const storedKeys = Object.keys(localStorage);
+  //         storedKeys.forEach((key) => {
+  //           safe = false;
+  //           const value = localStorage.getItem(key);
+  //           if (value && value.startsWith('{"note')) {
+  //             requestIdArray.forEach((request) => {
+  //               if (key != request) {
+  //                 safe = true;
+  //               }
+  //             });
+  //           }
+  //           if (safe == false) {
+  //             console.log(key);
+  //           }
+  //         });
+  //       }
+  //     }
+  //   }
+}
 /**
  * Removes the confirmation message by clicking the dismiss button on a modal.
  * If the success message is currently displayed, it waits for 300 milliseconds
@@ -455,6 +485,7 @@ const observer = new MutationObserver(() => {
     if (successMSG) {
       removeConfirmation();
     }
+
     replaceLinks();
     fixCSS();
   }, 200);
