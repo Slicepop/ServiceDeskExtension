@@ -6,10 +6,6 @@
  * The "Save and Close" button will close the window after a delay when clicked.
  */
 
-localStorage.setItem("test", JSON.stringify({ note: "ASD", Heihgt: "ASD" }));
-const testData = JSON.parse(localStorage.getItem("test"));
-console.log(testData);
-
 const myTasks = document.querySelector(
   "#rightpanel > zsd-user-requestlist > div.row.rowoverride > div.mb-3.col-10 > ul > li.requesttypeheader.ml-0"
 );
@@ -64,43 +60,50 @@ const saveButton = document.querySelector(
   "#request_general_container > div > div.card-header.general-card-header > button"
 );
 function addPrivate() {
-  if (saveButton) {
-    saveButton.onclick = function () {
-      if (
-        requestStatus.value == "Resolved" ||
-        requestStatus.value == "Autoclosed"
-      ) {
-        localStorage.removeItem(requestId);
-      }
-    };
-  }
   const requestId = document.querySelector(
     "#editRequest > div.card.request-subject.common-subject-description-card.ml-0 > div > div.priority_requestnumber > p.request-number"
   ).textContent;
-  const privNote = document.createElement("textarea");
-  privNote.style.marginRight = "10px";
-  privNote.placeholder = "Private Note";
-  privNote.style.outlineStyle = "solid";
-  privNote.style.outlineWidth = ".25px";
-  privNote.style.outlineColor = "#63fbf0";
-  privNote.style.color = "#63fbf0";
-  privNote.style.backgroundColor = "rgba(32, 32, 32, 0.8)";
-  privNote.style.borderRadius = "5px";
-  privNote.style.transform = "scale(.85)";
-  const noteObject = JSON.parse(localStorage.getItem(requestId) || "{}");
-  privNote.value = noteObject.note || "";
-  privNote.addEventListener("input", () => {
-    if (privNote.value === "") {
-      localStorage.removeItem(requestId);
-    } else {
-      localStorage.setItem(requestId, JSON.stringify({ note: privNote.value }));
+
+  const storedKeys = Object.keys(localStorage);
+  if (storedKeys.includes(requestId)) {
+    if (saveButton) {
+      saveButton.onclick = function () {
+        if (
+          requestStatus.value == "Resolved" ||
+          requestStatus.value == "Autoclosed"
+        ) {
+          localStorage.removeItem(requestId);
+        }
+      };
     }
-  });
-  document
-    .querySelector(
-      "#editRequest > div.card.request-subject.common-subject-description-card.ml-0 > div > div.request_subject"
-    )
-    .prepend(privNote);
+    const privNote = document.createElement("textarea");
+    privNote.style.marginRight = "10px";
+    privNote.placeholder = "Private Note";
+    privNote.style.outlineStyle = "solid";
+    privNote.style.outlineWidth = ".25px";
+    privNote.style.outlineColor = "#63fbf0";
+    privNote.style.color = "#63fbf0";
+    privNote.style.backgroundColor = "rgba(32, 32, 32, 0.8)";
+    privNote.style.borderRadius = "5px";
+    privNote.style.transform = "scale(.85)";
+    const noteObject = JSON.parse(localStorage.getItem(requestId) || "{}");
+    privNote.value = noteObject.note || "";
+    privNote.addEventListener("input", () => {
+      if (privNote.value === "") {
+        localStorage.removeItem(requestId);
+      } else {
+        localStorage.setItem(
+          requestId,
+          JSON.stringify({ note: privNote.value })
+        );
+      }
+    });
+    document
+      .querySelector(
+        "#editRequest > div.card.request-subject.common-subject-description-card.ml-0 > div > div.request_subject"
+      )
+      .prepend(privNote);
+  }
 }
 if (window.location.href.includes("New&requestId=")) {
   addPrivate();
@@ -212,7 +215,30 @@ if (!localStorage.getItem("refresh")) {
  * - Adds an onclick event listener to open a new tab with the New&requestId= url.
  * - Marks the original link as processed to avoid duplicate processing.
  */
+const requestIdArray = [];
+const search = document.querySelector("#searchText");
+foo = true;
 function replaceLinks() {
+  // if (incident.className != "selectedtab") {
+  //   if (search) {
+  //     if (search.value == "") {
+  //       if (foo) {
+  //         foo = false;
+  //         const storedKeys = Object.keys(localStorage);
+  //         storedKeys.forEach((key) => {
+  //           const value = localStorage.getItem(key);
+  //           if (value && value.startsWith('{"note')) {
+  //             requestIdArray.forEach((requestId) => {
+  //               if (key.includes(requestId)) {
+  //                 console.log(key);
+  //               }
+  //             });
+  //           }
+  //         });
+  //       }
+  //     }
+  //   }
+  // }
   const links = document.querySelectorAll('a[id^="requestId"]');
   links.forEach((link) => {
     if (!link.dataset.processed) {
@@ -224,15 +250,16 @@ function replaceLinks() {
 
           const tdElements = trElement.querySelectorAll("td");
           tdElements.forEach((td) => {
+            const requestId = trElement
+              .querySelector("#requestId")
+              .textContent.trim();
+            requestIdArray.push(requestId);
             if (
               td.textContent.trim() == "Open" ||
               td.textContent.trim() == "In Progress" ||
               td.textContent.trim() == "Waiting for customer" ||
               td.textContent.trim() == "On Hold"
             ) {
-              const requestId = trElement
-                .querySelector("#requestId")
-                .textContent.trim();
               if (!tbodyElement.querySelector("textarea")) {
                 const textTD = document.createElement("td");
                 textTD.style.height = "20px";
@@ -300,26 +327,28 @@ function replaceLinks() {
                 }
                 trEl.append(textTD);
 
-                if (privateNote.value === "") {
-                  privateNote.style.width = "80px";
-                  privateNote.style.width = noteObjecta.Width || "auto";
-                } else {
-                  privateNote.style.width = noteObjecta.Width || "auto";
+                // if (privateNote.value === "") {
+                //   privateNote.style.width = "80px";
+                // } else {
+                //   privateNote.style.width = noteObjecta.Width || "auto";
 
-                  privateNote.style.width = privateNote.scrollWidth + 5 + "px";
-                }
-                privateNote.style.height = noteObjecta.Height;
-                privateNote.style.height = `${privateNote.scrollHeight + 5}px`;
+                //   privateNote.style.width = privateNote.scrollWidth + 5 + "px";
+                // }
+                privateNote.style.width = noteObjecta.Width || "auto";
+                privateNote.style.height = noteObjecta.Height || "30px";
+                // privateNote.style.height = `${privateNote.scrollHeight + 5}px`;
 
                 const resizeObserver = new ResizeObserver(() => {
-                  localStorage.setItem(
-                    requestId,
-                    JSON.stringify({
-                      note: privateNote.value,
-                      Height: privateNote.style.height,
-                      Width: privateNote.style.width,
-                    })
-                  );
+                  if (privateNote.value != "") {
+                    localStorage.setItem(
+                      requestId,
+                      JSON.stringify({
+                        note: privateNote.value,
+                        Height: privateNote.style.height,
+                        Width: privateNote.style.width,
+                      })
+                    );
+                  }
                 });
 
                 resizeObserver.observe(privateNote);
