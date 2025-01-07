@@ -5,6 +5,11 @@
  * If the current URL includes "New&requestId=", it modifies the behavior of the save button and adds a "Save and Close" button.
  * The "Save and Close" button will close the window after a delay when clicked.
  */
+
+localStorage.setItem("test", JSON.stringify({ note: "ASD", Heihgt: "ASD" }));
+const testData = JSON.parse(localStorage.getItem("test"));
+console.log(testData);
+
 const myTasks = document.querySelector(
   "#rightpanel > zsd-user-requestlist > div.row.rowoverride > div.mb-3.col-10 > ul > li.requesttypeheader.ml-0"
 );
@@ -72,7 +77,7 @@ function addPrivate() {
   const requestId = document.querySelector(
     "#editRequest > div.card.request-subject.common-subject-description-card.ml-0 > div > div.priority_requestnumber > p.request-number"
   ).textContent;
-  const privNote = document.createElement("Input");
+  const privNote = document.createElement("textarea");
   privNote.style.marginRight = "10px";
   privNote.placeholder = "Private Note";
   privNote.style.outlineStyle = "solid";
@@ -82,13 +87,13 @@ function addPrivate() {
   privNote.style.backgroundColor = "rgba(32, 32, 32, 0.8)";
   privNote.style.borderRadius = "5px";
   privNote.style.transform = "scale(.85)";
-  privNote.value = localStorage.getItem(requestId) || "";
-
+  const noteObject = JSON.parse(localStorage.getItem(requestId) || "{}");
+  privNote.value = noteObject.note || "";
   privNote.addEventListener("input", () => {
     if (privNote.value === "") {
       localStorage.removeItem(requestId);
     } else {
-      localStorage.setItem(requestId, privNote.value);
+      localStorage.setItem(requestId, JSON.stringify({ note: privNote.value }));
     }
   });
   document
@@ -234,7 +239,6 @@ function replaceLinks() {
                 textTD.style.padding = "0px";
                 textTD.colSpan = "10";
                 const privateNote = document.createElement("textarea");
-                privateNote.style.height = `${privateNote.scrollHeight + 5}px`;
                 textTD.setAttribute("_ngcontent-ng-c4256737322", "");
                 // privateNote.style.height = "30px";
                 const replyMSG_EL =
@@ -242,7 +246,7 @@ function replaceLinks() {
                 if (replyMSG_EL) {
                   const replyMSG = replyMSG_EL.querySelector("td.notetext");
                   replyMSG.style.float = "right";
-                  replyMSG.style.marginRight = "85px";
+                  replyMSG.style.marginRight = "6vw";
                   replyMSG.style.outlineStyle = "solid";
                   replyMSG.style.outlineWidth = ".25px";
                   replyMSG.style.outlineColor = "#63fbf0";
@@ -256,7 +260,10 @@ function replaceLinks() {
                 } else {
                   textTD.append(privateNote);
                 }
-                privateNote.value = localStorage.getItem(requestId) || "";
+                const noteObjecta = JSON.parse(
+                  localStorage.getItem(requestId) || "{}"
+                );
+                privateNote.value = noteObjecta.note || "";
 
                 privateNote.id = "private";
                 privateNote.placeholder = "Private Note";
@@ -265,19 +272,20 @@ function replaceLinks() {
                 privateNote.style.outlineStyle = "solid";
                 privateNote.style.minWidth = "50px";
                 privateNote.style.outlineWidth = ".25px";
-                privateNote.style.maxWidth = "817px";
+
+                privateNote.style.maxWidth = "32vw";
                 privateNote.style.outlineColor = "#63fbf0";
                 privateNote.style.color = "#63fbf0";
                 privateNote.style.backgroundColor = "rgba(32, 32, 32, 0.8)";
                 privateNote.style.borderRadius = "5px";
                 privateNote.style.marginTop = "-15px";
                 privateNote.style.marginLeft = "5px";
-                privateNote.style.resize = "horizontal";
+                privateNote.style.resize = "both";
                 // privateNote.style.transform = "scale(0.8)";
                 const trEl = document.createElement("tr");
                 trEl.setAttribute("_ngcontent-ng-c4256737322", "");
                 trEl.style.boxSizing = "border-box";
-                // privateNote.style.minHeight = "20px";
+                privateNote.style.minHeight = "25px";
                 trEl.style.padding = ".25rem";
                 trEl.style.border = "0px";
                 tbodyElement.append(trEl);
@@ -295,21 +303,55 @@ function replaceLinks() {
                 if (privateNote.value === "") {
                   privateNote.style.width = "80px";
                 } else {
-                  privateNote.style.width = "auto";
+                  privateNote.style.width = noteObjecta.Width || "auto";
 
                   privateNote.style.width = privateNote.scrollWidth + 5 + "px";
                 }
-                privateNote.style.height = "auto";
+                privateNote.style.height = noteObjecta.Height;
                 privateNote.style.height = `${privateNote.scrollHeight + 5}px`;
+
+                const resizeObserver = new ResizeObserver(() => {
+                  localStorage.setItem(
+                    requestId,
+                    JSON.stringify({
+                      note: privateNote.value,
+                      Height: privateNote.style.height,
+                      Width: privateNote.style.width,
+                    })
+                  );
+                });
+
+                resizeObserver.observe(privateNote);
                 privateNote.addEventListener("input", () => {
-                  privateNote.style.height = "auto";
-                  privateNote.style.height = `${
-                    privateNote.scrollHeight + 5
-                  }px`;
+                  // if (privateNote.value === "") {
+                  //   privateNote.style.height = "30px";
+                  // } else {
+                  //   privateNote.style.height = "auto";
+                  //   privateNote.style.height = `${
+                  //     privateNote.scrollHeight + 5
+                  //   }px`;
+                  // }
+                  // console.log(privateNote.style.maxHeight);
+                  // console.log(privateNote.scrollHeight);
+                  // if (
+                  //   privateNote.style.maxHeight >=
+                  //   privateNote.scrollHeight + 5
+                  // ) {
+                  //   privateNote.style.maxHeight = `${
+                  //     privateNote.scrollHeight + 5
+                  //   }px`;
+                  // }
                   if (privateNote.value === "") {
                     localStorage.removeItem(requestId);
                   } else {
-                    localStorage.setItem(requestId, privateNote.value);
+                    localStorage.setItem(
+                      requestId,
+                      JSON.stringify({
+                        note: privateNote.value,
+                        Height: privateNote.style.height,
+                        Width: privateNote.style.width,
+                      })
+                    );
                   }
                 });
               }
