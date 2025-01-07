@@ -108,9 +108,11 @@ if (window.location.href.includes("New&requestId=")) {
     readMore.click();
   }
   if (descriptionArea) {
+    document.querySelector("#request-description-text").style.overflow = "auto";
+    descriptionArea.style.overflow = "hidden";
     descriptionArea.style.resize = "vertical";
-    descriptionArea.style.overflow = "auto";
-    descriptionArea.style.maxHeight = "2500px";
+    descriptionArea.style.minHeight = "80px";
+    descriptionArea.style.maxHeight = descriptionArea.scrollHeight + 20 + "px";
     descriptionArea.style.height = "300px";
   }
 }
@@ -234,6 +236,7 @@ function replaceLinks() {
                 textTD.style.padding = "0px";
                 textTD.colSpan = "10";
                 const privateNote = document.createElement("textarea");
+                privateNote.style.height = `${privateNote.scrollHeight + 5}px`;
                 textTD.setAttribute("_ngcontent-ng-c4256737322", "");
                 // privateNote.style.height = "30px";
                 const replyMSG_EL =
@@ -256,8 +259,7 @@ function replaceLinks() {
                   textTD.append(privateNote);
                 }
                 privateNote.value = localStorage.getItem(requestId) || "";
-                privateNote.style.height = "28px";
-                privateNote.style.fields;
+
                 privateNote.id = "private";
                 privateNote.placeholder = "Private Note";
                 privateNote.marginLeft = "10px";
@@ -270,7 +272,6 @@ function replaceLinks() {
                 privateNote.style.color = "#63fbf0";
                 privateNote.style.backgroundColor = "rgba(32, 32, 32, 0.8)";
                 privateNote.style.borderRadius = "5px";
-                privateNote.style.whiteSpace = "nowrap";
                 privateNote.style.marginTop = "-15px";
                 privateNote.style.marginLeft = "5px";
                 privateNote.style.resize = "horizontal";
@@ -300,8 +301,13 @@ function replaceLinks() {
 
                   privateNote.style.width = privateNote.scrollWidth + 5 + "px";
                 }
-
+                privateNote.style.height = "auto";
+                privateNote.style.height = `${privateNote.scrollHeight + 5}px`;
                 privateNote.addEventListener("input", () => {
+                  privateNote.style.height = "auto";
+                  privateNote.style.height = `${
+                    privateNote.scrollHeight + 5
+                  }px`;
                   if (privateNote.value === "") {
                     localStorage.removeItem(requestId);
                   } else {
