@@ -302,6 +302,7 @@ function replaceLinks() {
 
                 if (privateNote.value === "") {
                   privateNote.style.width = "80px";
+                  privateNote.style.width = noteObjecta.Width || "auto";
                 } else {
                   privateNote.style.width = noteObjecta.Width || "auto";
 
