@@ -78,7 +78,7 @@ function addPrivate() {
     }
     const privNote = document.createElement("textarea");
     privNote.style.marginRight = "10px";
-    privNote.placeholder = "Private Note";
+    privNote.placeholder = "Personal Note";
     privNote.style.outlineStyle = "solid";
     privNote.style.outlineWidth = ".25px";
     privNote.style.outlineColor = "#63fbf0";
@@ -275,7 +275,7 @@ function replaceLinks() {
                 privateNote.value = noteObjecta.note || "";
 
                 privateNote.id = "private";
-                privateNote.placeholder = "Private Note";
+                privateNote.placeholder = "Personal Note";
                 privateNote.marginLeft = "10px";
                 privateNote.style.float = "left";
                 privateNote.style.outlineStyle = "solid";
