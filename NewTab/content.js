@@ -60,9 +60,14 @@ const saveButton = document.querySelector(
   "#request_general_container > div > div.card-header.general-card-header > button"
 );
 function addPrivate() {
-  const requestId = document.querySelector(
+  const requestIdElement = document.querySelector(
     "#editRequest > div.card.request-subject.common-subject-description-card.ml-0 > div > div.priority_requestnumber > p.request-number"
-  ).textContent;
+  );
+  if (!requestIdElement) {
+    console.error("Request ID element not found");
+    return;
+  }
+  const requestId = requestIdElement.textContent;
 
   const storedKeys = Object.keys(localStorage);
   if (storedKeys.includes(requestId)) {
@@ -78,6 +83,13 @@ function addPrivate() {
     }
     const privNote = document.createElement("textarea");
     privNote.style.marginRight = "10px";
+    privNote.style.width = "100%";
+
+    privNote.style.resize = "vertical";
+    privNote.style.margin = "0";
+    privNote.style.padding = "0";
+    privNote.style.boxSizing = "border-box";
+    privNote.style.float = "left";
     privNote.placeholder = "Personal Note";
     privNote.style.outlineStyle = "solid";
     privNote.style.outlineWidth = ".25px";
@@ -98,11 +110,21 @@ function addPrivate() {
         );
       }
     });
+    privNote.style.height = privNote.style.scrollHeight;
+    const PrivNoteLabel = document.createElement("h6");
+    PrivNoteLabel.id = "privnotelabel";
+    PrivNoteLabel.style.color = "rgb(161, 153, 140)";
+    PrivNoteLabel.textContent = "PERSONAL NOTE";
     document
       .querySelector(
-        "#editRequest > div.card.request-subject.common-subject-description-card.ml-0 > div > div.request_subject"
+        "#request-general-detail > div > div:nth-child(2) > div:nth-child(2) > div > div"
       )
-      .prepend(privNote);
+      .append(PrivNoteLabel);
+    document
+      .querySelector(
+        "#request-general-detail > div > div:nth-child(2) > div:nth-child(2) > div > div"
+      )
+      .append(privNote);
   }
 }
 if (window.location.href.includes("New&requestId=")) {
