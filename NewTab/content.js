@@ -115,16 +115,13 @@ function addPrivate() {
     PrivNoteLabel.id = "privnotelabel";
     PrivNoteLabel.style.color = "rgb(161, 153, 140)";
     PrivNoteLabel.textContent = "PERSONAL NOTE";
-    document
-      .querySelector(
-        "#request-general-detail > div > div:nth-child(2) > div:nth-child(2) > div > div"
-      )
-      .append(PrivNoteLabel);
-    document
-      .querySelector(
-        "#request-general-detail > div > div:nth-child(2) > div:nth-child(2) > div > div"
-      )
-      .append(privNote);
+    const addDTL = document.querySelector(
+      "#request-general-detail > div > div:nth-child(2) > div:nth-child(2) > div > div"
+    );
+    if (addDTL) {
+      addDTL.append(PrivNoteLabel);
+      addDTL.append(privNote);
+    }
   }
 }
 if (window.location.href.includes("New&requestId=")) {
