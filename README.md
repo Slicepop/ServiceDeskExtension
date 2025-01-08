@@ -17,6 +17,7 @@
 - Changes all request links to open in new tab
 - Alternates background color of request list item for easier readability
 - Automatically closes confirmation of ticket creation after a delay of 300 milliseconds
+- Add in "Personal Note" to each ticket assigned to you. This is a temporary note that will get removed once the ticket is not assigned to yourself
 
 ### **Request Page**
 
