@@ -58,31 +58,15 @@ function fixCSS() {
       "#addnoteModal > div > div:nth-child(1) > div.modal-body.col-lg-12.col-xl-12.col-md-12.col-sm-12.col-12"
     );
     if (addNote) {
-      const iframe = document.querySelector(
-        "#tiny-angular_54559819731735658727083_ifr"
-      ); // Use the correct iframe ID or selector
-      if (iframe) {
-        // Wait for iframe content to load
-        iframe.onload = function () {
-          const iframeDocument =
-            iframe.contentDocument || iframe.contentWindow.document;
-
-          if (iframeDocument) {
-            const body = iframeDocument.body; // Access the body of the iframe
-            if (body) {
-              // Add or modify content
-              body.innerHTML +=
-                "<p>This is added content inside the iframe!</p>";
-              console.log("Content added to iframe.");
-            } else {
-              console.error("No <body> found in the iframe document.");
-            }
-          } else {
-            console.error("Could not access iframe document.");
-          }
-        };
+      const editor = tinymce.get(
+        document.querySelector(
+          "#addnoteModal > div > div:nth-child(1) > div.modal-body.col-lg-12.col-xl-12.col-md-12.col-sm-12.col-12 > div.container-fluid.pl-0.pr-0 > div.form-group.col-xl-12.col-lg-12.col-md-12.col-xl-12.col-sm-12.col-12.mb-1.pl-0.pr-0 > zsd-tinymce > div > editor textarea"
+        ).id
+      );
+      if (editor) {
+        console.log("ASDSASD" + editor.getContent("ASDASDASDASD"));
       } else {
-        console.error("Iframe not found.");
+        console.log(editor);
       }
     }
 

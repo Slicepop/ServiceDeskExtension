@@ -17,7 +17,7 @@
   "content_scripts": [
     {
       "matches": ["https://support.wmed.edu/LiveTime/WebObjects/*"],
-      "js": ["content.js"]
+      "js": ["content.js", "./node_modules/tinymce/tinymce.js"]
     }
   ]
 }
