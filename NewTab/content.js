@@ -44,13 +44,13 @@ function updateTitle() {
       try {
         document.title += " - " + requestUser.value;
       } catch (error) {
-        console.error("Error updating title with user value:", error);
+        document.title = "ERROR fetching title, Refresh";
       }
     } else {
       document.title = requestTitle.textContent.substring(0, 61) + "...";
     }
   } else {
-    document.title = "ERROR loading title, refresh";
+    document.title = "ERROR fetching title, Refresh";
   }
 }
 const requestStatus = document.querySelector(
