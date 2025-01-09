@@ -145,79 +145,83 @@ if (window.location.href.includes("New&requestId=")) {
 
 function fixCSS() {
   if (window.location.href.includes("New&requestId=")) {
-    const addNote = document.querySelector(
-      "#addnoteModal > div > div:nth-child(1) > div.modal-body.col-lg-12.col-xl-12.col-md-12.col-sm-12.col-12"
-    );
-    if (addNote) {
-      const originalButton = document.querySelector("#createquickrequest");
+    // const addNote = document.querySelector(
+    //   "#addnoteModal > div > div:nth-child(1) > div.modal-body.col-lg-12.col-xl-12.col-md-12.col-sm-12.col-12"
+    // );
+    // if (addNote) {
+    //   const originalButton = document.querySelector("#createquickrequest");
 
-      if (originalButton && !document.querySelector(".overlay-button")) {
-        // Create the overlay button
-        const overlayButton = document.createElement("button");
-        overlayButton.classList.add("overlay-button");
-        overlayButton.style.opacity = "0";
+    //   if (originalButton && !document.querySelector(".overlay-button")) {
+    //     // Create the overlay button
+    //     const overlayButton = document.createElement("button");
+    //     overlayButton.classList.add("overlay-button");
+    //     overlayButton.style.opacity = "0";
 
-        // Append the overlay button to the same parent
-        const parent = originalButton.parentNode;
-        parent.style.position = "relative"; // Ensure the parent container is positioned
-        parent.appendChild(overlayButton);
+    //     // Append the overlay button to the same parent
+    //     const parent = originalButton.parentNode;
+    //     parent.style.position = "relative"; // Ensure the parent container is positioned
+    //     parent.appendChild(overlayButton);
 
-        // Match the position and size of the original button
-        const rect = originalButton.getBoundingClientRect();
-        overlayButton.style.position = "absolute";
-        overlayButton.style.top = `${originalButton.offsetTop - 10}px`;
-        overlayButton.style.left = `${originalButton.offsetLeft - 18}px`;
-        overlayButton.style.width = `${rect.width + 20}px`;
-        overlayButton.style.height = `${rect.height + 20}px`;
+    //     // Match the position and size of the original button
+    //     const rect = originalButton.getBoundingClientRect();
+    //     overlayButton.style.position = "absolute";
+    //     overlayButton.style.top = `${originalButton.offsetTop - 10}px`;
+    //     overlayButton.style.left = `${originalButton.offsetLeft - 18}px`;
+    //     overlayButton.style.width = `${rect.width + 20}px`;
+    //     overlayButton.style.height = `${rect.height + 20}px`;
 
-        const changeStatus = document.querySelector(
-          "#changeRequestStatusCheckBox"
-        );
-        if (changeStatus) {
-          overlayButton.onclick = function () {
-            if (changeStatus.checked) {
-              const selectStatus = document.querySelector(
-                "#addnoteModal > div > div:nth-child(1) > div.modal-body.col-lg-12.col-xl-12.col-md-12.col-sm-12.col-12 > div.container-fluid.pl-0.pr-0 > div:nth-child(3) > div > div.col-xl-4.col-lg-4.col-md-12.col-sm-12.col-12.group-options-wrapper > div.change-status-wrapper > select"
-              );
-              if (
-                selectStatus &&
-                (selectStatus.selectedIndex == 0 ||
-                  selectStatus.selectedIndex == 4 ||
-                  selectStatus.selectedIndex == 5 ||
-                  selectStatus.selectedIndex == 6 ||
-                  selectStatus.selectedIndex == 7)
-              ) {
-                var tempStatus = selectStatus.selectedIndex;
-                var mainPageStatus = document.querySelector(
-                  "#request-general-detail > div > div:nth-child(2) > div:nth-child(1) > div > div > div > div:nth-child(13) > div > select"
-                );
-                selectStatus.selectedIndex = mainPageStatus.selectedIndex;
-                originalButton.click();
-                mainPageStatus.selectedIndex = tempStatus;
-                const saveButton = document.querySelector(
-                  "#request_general_container > div > div.card-header.general-card-header > button"
-                );
-                setTimeout(() => {
-                  saveButton.click();
-                }, 500);
-              }
-            } else {
-              originalButton.click();
-            }
-          };
-        }
-      }
-      //   const editor = tinymce.get(
-      //     document.querySelector(
-      //       "#addnoteModal > div > div:nth-child(1) > div.modal-body.col-lg-12.col-xl-12.col-md-12.col-sm-12.col-12 > div.container-fluid.pl-0.pr-0 > div.form-group.col-xl-12.col-lg-12.col-md-12.col-xl-12.col-sm-12.col-12.mb-1.pl-0.pr-0 > zsd-tinymce > div > editor textarea"
-      //     ).id
-      //   );
-      //   if (editor) {
-      //     console.log("ASDSASD" + editor.getContent("ASDASDASDASD"));
-      //   } else {
-      //     console.log(editor);
-      //   }
-    }
+    //     const changeStatus = document.querySelector(
+    //       "#changeRequestStatusCheckBox"
+    //     );
+    //     if (changeStatus) {
+    //       overlayButton.onclick = function () {
+    //         if (changeStatus.checked) {
+    //           const selectStatus = document.querySelector(
+    //             "#addnoteModal > div > div:nth-child(1) > div.modal-body.col-lg-12.col-xl-12.col-md-12.col-sm-12.col-12 > div.container-fluid.pl-0.pr-0 > div:nth-child(3) > div > div.col-xl-4.col-lg-4.col-md-12.col-sm-12.col-12.group-options-wrapper > div.change-status-wrapper > select"
+    //           );
+    //           if (
+    //             selectStatus &&
+    //             (selectStatus.selectedIndex == 0 ||
+    //               selectStatus.selectedIndex == 4 ||
+    //               selectStatus.selectedIndex == 5 ||
+    //               selectStatus.selectedIndex == 6 ||
+    //               selectStatus.selectedIndex == 7)
+    //           ) {
+    //             var tempStatus = selectStatus.selectedIndex;
+    //             var mainPageStatus = document.querySelector(
+    //               "#request-general-detail > div > div:nth-child(2) > div:nth-child(1) > div > div > div > div:nth-child(13) > div > select"
+    //             );
+    //             selectStatus.selectedIndex = mainPageStatus.selectedIndex;
+    //             setTimeout(() => {
+    //               originalButton.click();
+    //             }, 4000);
+    //             mainPageStatus.selectedIndex = tempStatus;
+    //             const saveButton = document.querySelector(
+    //               "#request_general_container > div > div.card-header.general-card-header > button"
+    //             );
+    //             setTimeout(() => {
+    //               // saveButton.click();
+
+    //               console.log("ASDssss");
+    //             }, 3500);
+    //           }
+    //         } else {
+    //           originalButton.click();
+    //         }
+    //       };
+    //     }
+    //   }
+    //   //   const editor = tinymce.get(
+    //   //     document.querySelector(
+    //   //       "#addnoteModal > div > div:nth-child(1) > div.modal-body.col-lg-12.col-xl-12.col-md-12.col-sm-12.col-12 > div.container-fluid.pl-0.pr-0 > div.form-group.col-xl-12.col-lg-12.col-md-12.col-xl-12.col-sm-12.col-12.mb-1.pl-0.pr-0 > zsd-tinymce > div > editor textarea"
+    //   //     ).id
+    //   //   );
+    //   //   if (editor) {
+    //   //     console.log("ASDSASD" + editor.getContent("ASDASDASDASD"));
+    //   //   } else {
+    //   //     console.log(editor);
+    //   //   }
+    // }
 
     // if (addNote) {
     //   const bodyElement = document.querySelector('body[id="tinymce"]');
