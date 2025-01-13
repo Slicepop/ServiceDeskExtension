@@ -142,8 +142,76 @@ if (window.location.href.includes("New&requestId=")) {
     descriptionArea.style.height = "300px";
   }
 }
-function changeMainpagestatus(selectIndex) {
+function changeMainpagestatus(tempStatus) {
   var mainPageStatus = document.querySelectorAll(".commonsectiondata")[12];
+  const event2 = new Event("change", { bubbles: true });
+
+  mainPageStatus.selectedIndex = tempStatus;
+  console.log(mainPageStatus.selectedIndex);
+  mainPageStatus.dispatchEvent(event2);
+}
+function changeMainpagestatusUntilSuccess(
+  tempStatus,
+  maxRetries = 15,
+  delay = 300
+) {
+  let attempts = 0;
+  console.log(attempts);
+  function attemptChange() {
+    try {
+      changeMainpagestatus(tempStatus);
+
+      // Check if the operation succeeded
+      const mainPageStatus =
+        document.querySelectorAll(".commonsectiondata")[12];
+      if (
+        document.querySelector(".col-12.alert.alert-info.alert-dismissible") &&
+        document.querySelector(".col-12.alert.alert-info.alert-dismissible")
+          .innerHTML ==
+          " Save your changes before updating the following sections. " &&
+        !document.querySelector("#addnoteModal")
+      ) {
+        console.log("Status successfully changed!");
+        const saveButton = document.querySelector(
+          "#request_general_container > div > div.card-header.general-card-header > button"
+        );
+        saveButton.type = "submit";
+
+        try {
+          setTimeout(() => {
+            saveButton.dispatchEvent(new Event("click"));
+            saveButton.click();
+          }, 1000);
+          console.log("save click");
+        } catch (error) {
+          console.log("Error clicking save button:", error);
+          setTimeout(attemptChange, delay);
+        }
+        return; // Exit if successful
+      }
+
+      // If not successful and we have retries left, retry after a delay
+      if (attempts < maxRetries) {
+        attempts++;
+        console.log(`Retrying... Attempt ${attempts}`);
+        setTimeout(attemptChange, delay);
+      } else {
+        console.error("Failed to change status after maximum retries.");
+      }
+    } catch (error) {
+      console.log("Error during status change:", error);
+
+      // Retry on error if within max retries
+      if (attempts < maxRetries) {
+        attempts++;
+        setTimeout(attemptChange, delay);
+      } else {
+        console.log("Exceeded maximum retries due to errors.");
+      }
+    }
+  }
+
+  attemptChange(); // Start the first attempt
 }
 function fixCSS() {
   if (window.location.href.includes("New&requestId=")) {
@@ -198,22 +266,9 @@ function fixCSS() {
                 setTimeout(() => {
                   originalButton.click();
                 }, 200);
-                const event2 = new Event("change", { bubbles: true });
                 setTimeout(() => {
-                  mainPageStatus.disabled = false;
-                  mainPageStatus.selectedIndex = tempStatus;
-                  mainPageStatus.disabled = true;
-                  console.log(mainPageStatus.selectedIndex);
-                  mainPageStatus.dispatchEvent(event2);
+                  changeMainpagestatusUntilSuccess(tempStatus);
                 }, 300);
-
-                mainPageStatus.dispatchEvent(event2);
-                const saveButton = document.querySelector(
-                  "#request_general_container > div > div.card-header.general-card-header > button"
-                );
-                setTimeout(() => {
-                  // saveButton.click();
-                }, 500);
               }
             } else {
               originalButton.click();

@@ -18,7 +18,7 @@
     {
       "matches": ["https://support.wmed.edu/LiveTime/WebObjects/*"],
       "js": ["content.js"],
-      "run at": "document_end"
+      "run at": "document_idle"
     }
   ]
 }
