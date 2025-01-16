@@ -349,7 +349,7 @@ function replaceLinks() {
               td.textContent.trim() == "Open" ||
               td.textContent.trim() == "In Progress" ||
               td.textContent.trim() == "Waiting for customer" ||
-              td.textContent.trim() == "On Hold"
+              td.textContent.trim().includes == "On Hold"
             ) {
               if (!tbodyElement.querySelector("textarea")) {
                 const textTD = document.createElement("td");
