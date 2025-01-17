@@ -7,7 +7,9 @@
 
   "action": {
     "default_icon": "favicon.png",
-    "default_popup": "popup.html"
+    "resources" : ["sun-solid.svg", "moon-solid.svg"],
+    "default_popup": "popup.html",
+    "css": ["./styles.css"]
   },
   "web_accessible_resources": [
     {
