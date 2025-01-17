@@ -48,7 +48,11 @@ function createLoginPage() {
   loginOverlay.style.zIndex = "1000";
 
   const loginForm = document.createElement("div");
-  loginForm.style.backgroundColor = "white";
+  if (localStorage.getItem("isDarkMode") === "true") {
+    loginForm.style.backgroundColor = "#363232";
+  } else {
+    loginForm.style.backgroundColor = "white";
+  }
   loginForm.style.padding = "20px";
   loginForm.style.borderRadius = "5px";
   loginForm.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.5)";

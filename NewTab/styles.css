@@ -1,4 +1,4 @@
-html{
+html {
   border-radius: 25px;
   width: 375px;
   height: 100px;
@@ -9,19 +9,19 @@ body {
   color: black;
   margin: 50px;
 }
-  
-  /* Dark Mode */
+
+/* Dark Mode */
 body.dark-mode {
   background-color: #3d3d3d;
   color: white;
 }
-  
+
 button.dark-mode {
   background-color: #333;
   color: white;
 }
 
-#theme-toggle{
+#theme-toggle {
   float: right;
   width: auto;
   margin: 15px;
@@ -31,7 +31,7 @@ button.dark-mode {
   right: 0;
 }
 
-.dark-mode input[type=text] {
+.dark-mode input {
   background-color: #3d3d3d;
   color: white;
 }
@@ -46,29 +46,32 @@ p {
 
 p:hover {
   outline-style: solid;
-  outline-width: .5px;
-  
+  outline-width: 0.5px;
 }
 
-#subject{
+#subject {
   margin-top: 10px;
   margin-bottom: 10px;
 }
 
-input{
+input {
   margin-left: auto;
   margin-right: auto;
 }
 
-#lines{
+#lines {
   max-width: fit-content;
   margin-left: auto;
   margin-right: auto;
 }
 
-#boutons{
+#boutons {
   margin-left: auto;
   margin-right: auto;
   max-width: fit-content;
   padding-bottom: 50px;
+}
+#subjectLine {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
