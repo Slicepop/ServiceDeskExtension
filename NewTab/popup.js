@@ -35,6 +35,7 @@ if (refreshToken) {
 
 function createLoginPage() {
   const loginOverlay = document.createElement("div");
+  
   loginOverlay.id = "loginOverlay";
   loginOverlay.style.position = "fixed";
   loginOverlay.style.top = "0";
@@ -73,6 +74,7 @@ function createLoginPage() {
   passwordLabel.style.marginBottom = "5px";
 
   const passwordInput = document.createElement("input");
+  passwordInput.id = "pwordField"
   passwordInput.type = "password";
   passwordInput.style.width = "100%";
   passwordInput.style.marginBottom = "10px";
@@ -90,7 +92,6 @@ function createLoginPage() {
   function handleLogin() {
     username = usernameInput.value;
     password = passwordInput.value;
-    loginOverlay.remove();
     login();
   }
 
@@ -144,19 +145,25 @@ async function login() {
       requestOptions
     );
     if (!response.ok) {
-      throw new Error(`Login failed: ${response.statusText}`);
-    }
+      const passwordInput = document.querySelector("#pwordField")
+      const errorMSG = document.createElement("P")
+      errorMSG.textContent = "Incorrect Username or Password. Please try again."
+      passwordInput.append(errorMSG)
+    } else {
+    document.querySelector("#loginOverlay").remove();
     const result = await response.text();
     const loginOBJ = JSON.parse(result);
     console.log(loginOBJ);
     const authToken = loginOBJ.token;
     localStorage.setItem("authToken", authToken);
-
     const refreshToken = loginOBJ.refreshToken;
     localStorage.setItem("refreshToken", refreshToken);
     hidePage();
+    }
   } catch (error) {
+    console.log(error)
     if (error.message.includes("400")) {
+      console.log("Hey")
       // Optionally, you can trigger a re-login or show a login prompt here
       createLoginPage();
     }
