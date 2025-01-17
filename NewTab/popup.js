@@ -85,11 +85,19 @@ function createLoginPage() {
   loginButton.style.borderRadius = "5px";
   loginButton.style.cursor = "pointer";
 
-  loginButton.addEventListener("click", function () {
+  function handleLogin() {
     username = usernameInput.value;
     password = passwordInput.value;
     loginOverlay.remove();
     login();
+  }
+
+  loginButton.addEventListener("click", handleLogin);
+
+  passwordInput.addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+      handleLogin();
+    }
   });
 
   loginForm.appendChild(usernameLabel);
@@ -146,7 +154,7 @@ async function login() {
     localStorage.setItem("refreshToken", refreshToken);
     hidePage();
   } catch (error) {
-    if (error.message.includes("401")) {
+    if (error.message.includes("400")) {
       // Optionally, you can trigger a re-login or show a login prompt here
       createLoginPage();
     }
@@ -156,11 +164,26 @@ async function login() {
 var subject = "";
 var clientId = 0;
 const subjectline = document.querySelector("#subjectLine");
+const savedSubject = localStorage.getItem("subject");
+if (savedSubject) {
+  subjectline.value = savedSubject;
+  subject = savedSubject;
+}
 subjectline.addEventListener("input", function (event) {
+  const inputEvent = new Event("input");
+  subjectline.dispatchEvent(inputEvent);
+  localStorage.setItem("subject", event.target.value);
   subject = event.target.value;
 });
 const searchItem = document.querySelector("#search");
+const lastSearch = localStorage.getItem("lastSearch");
+if (lastSearch) {
+  searchItem.value = lastSearch;
+  const inputEvent = new Event("input");
+  searchItem.dispatchEvent(inputEvent);
+}
 searchItem.addEventListener("input", async function (event) {
+  localStorage.setItem("lastSearch", event.target.value);
   searchUser(event);
 });
 async function searchUser(event) {
@@ -203,16 +226,18 @@ async function searchUser(event) {
     const button2 = document.querySelectorAll("#myButton2");
     button2.forEach((button) => {
       button.onclick = function () {
+        localStorage.removeItem("subject");
+        localStorage.removeItem("lastSearch");
         switch (button.textContent) {
           case "Phone Call":
-            createPhoneQuickCall(subject, clientId, 10);
+            createPhoneQuickCall(subject, clientId, 10, 277657);
             break;
           case "Walk-Up":
-            createPhoneQuickCall(subject, clientId, 11);
+            createPhoneQuickCall(subject, clientId, 11, 277658);
 
             break;
           case "Teams Message":
-            createPhoneQuickCall(subject, clientId, 12);
+            createPhoneQuickCall(subject, clientId, 12, 277661);
 
             break;
           default:
@@ -271,12 +296,12 @@ async function searchUser(event) {
 //   } catch (error) {
 //     console.debug("Error:", error);
 //   }
-async function createPhoneQuickCall(subject, clientId, index) {
+async function createPhoneQuickCall(subject, clientId, index, itemId) {
   const raw = JSON.stringify({
     requestProcessIndex: "INCIDENT",
     clientId: clientId, // Dynamically use the clientId from loginOBJ
     subject: subject,
-    itemId: 277657,
+    itemId: itemId,
     classfication: 54,
     source: "USER_PORTAL",
   });
