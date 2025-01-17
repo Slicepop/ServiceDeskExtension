@@ -7,8 +7,6 @@
 //   }
 // });
 
-document.body.style.width = "200px";
-document.body.style.height = "200px";
 const refreshToken = localStorage.getItem("refreshToken");
 if (refreshToken) {
   fetch("https://support.wmed.edu/LiveTime/services/v1/auth/tokens", {
@@ -156,6 +154,7 @@ async function login() {
 var subject = "";
 var clientId = 0;
 const subjectline = document.querySelector("#subjectLine");
+subjectline.id = "subject"
 subjectline.addEventListener("input", function (event) {
   subject = event.target.value;
 });
@@ -317,3 +316,30 @@ async function createPhoneQuickCall(subject, clientId, index) {
     }
   }
 }
+const toggleDark = document.querySelector("#theme-toggle")
+var flip = localStorage.getItem('isDarkMode')
+// Dark mode
+toggleDark.addEventListener('click', function() {
+  console.log(flip)
+  // Toggle the 'dark-mode' class on the body element
+  if (localStorage.getItem('isDarkMode') === 'true'){
+    toggleDark.src = chrome.runtime.getURL("./sun-solid.svg")
+  }else{
+    toggleDark.src = chrome.runtime.getURL("./moon-solid.svg")
+  }
+  document.body.classList.toggle('dark-mode');
+  // Optionally, store the user's theme preference in localStorage
+  const isDarkMode = document.body.classList.contains('dark-mode');
+  localStorage.setItem('isDarkMode', isDarkMode);
+});
+
+// On page load, check the saved preference and apply dark mode if needed
+document.addEventListener('DOMContentLoaded', function() {
+  const savedTheme = localStorage.getItem('isDarkMode');
+  if (savedTheme === 'true') {
+    toggleDark.src = chrome.runtime.getURL("./moon-solid.svg")
+      document.body.classList.add('dark-mode');
+  }else{
+    toggleDark.src = chrome.runtime.getURL("./sun-solid.svg")
+  }
+});
