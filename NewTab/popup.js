@@ -171,8 +171,6 @@ async function login() {
   }
 }
 
-var subject = "";
-var clientId = 0;
 const subjectline = document.querySelector("#subjectLine");
 const savedSubject = localStorage.getItem("subject");
 if (savedSubject) {
@@ -180,8 +178,6 @@ if (savedSubject) {
   subject = savedSubject;
 }
 subjectline.addEventListener("input", function (event) {
-  const inputEvent = new Event("input");
-  subjectline.dispatchEvent(inputEvent);
   localStorage.setItem("subject", event.target.value);
   subject = event.target.value;
 });
@@ -216,7 +212,7 @@ async function searchUser(event) {
     const JSONresponse = await response.json();
     results = JSONresponse.results;
     const resultConatiner = document.querySelector("#resultBox");
-    resultConatiner.innerHTML = ""; // Clear previous results
+    resultConatiner.innerHTML = "";
 
     results.forEach((result) => {
       const resultItem = document.createElement("p");
@@ -225,48 +221,52 @@ async function searchUser(event) {
       resultItem.onclick = function () {
         console.log(result.fullName);
         searchItem.value = result.fullName;
-        clientId = result.clientId;
+        localStorage.setItem("clientId", result.clientId);
         const inputEvent = new Event("input");
         searchItem.dispatchEvent(inputEvent);
       };
       resultConatiner.appendChild(resultItem);
     });
     console.log(results[0].clientId);
-
-    const button2 = document.querySelectorAll("#myButton2");
-    button2.forEach((button) => {
-      button.onclick = function () {
-        localStorage.removeItem("subject");
-        localStorage.removeItem("lastSearch");
-        switch (button.textContent) {
-          case "Phone Call":
-            createQuickCall(subject, clientId, 277657);
-            break;
-          case "Walk-Up":
-            createQuickCall(subject, clientId, 277658);
-
-            break;
-          case "Teams Message":
-            createQuickCall(subject, clientId, 277661);
-
-            break;
-          default:
-            console.error("Something went wrong");
-            break;
-        }
-      };
-    });
   } catch (error) {
     if (error.message.includes("401")) {
       // Optionally, you can trigger a re-login or show a login prompt here
       createLoginPage();
-      const resultConatiner = document.querySelector("#resultBox");
-      resultConatiner.innerHTML = "<p>No results found</p>";
     }
+    const resultConatiner = document.querySelector("#resultBox");
+    resultConatiner.innerHTML = "<p>No results found</p>";
 
     console.log("Input event detected:", event.target.value);
   }
 }
+const button2 = document.querySelectorAll("#myButton2");
+button2.forEach((button) => {
+  button.onclick = function () {
+    var clientId = localStorage.getItem("clientId");
+    var subject = localStorage.getItem("subject");
+
+    localStorage.removeItem("subject");
+    localStorage.removeItem("lastSearch");
+    localStorage.removeItem("clientId");
+
+    switch (button.textContent) {
+      case "Phone Call":
+        createQuickCall(subject, clientId, 277657);
+        break;
+      case "Walk-Up":
+        createQuickCall(subject, clientId, 277658);
+
+        break;
+      case "Teams Message":
+        createQuickCall(subject, clientId, 277661);
+
+        break;
+      default:
+        console.error("Something went wrong");
+        break;
+    }
+  };
+});
 
 // Removed unused function logisn and variable authToken
 
@@ -315,12 +315,10 @@ async function createQuickCall(subject, clientId, itemId) {
     case 277658:
       subject = "Walk Up - " + subject;
       index = 11;
-
       break;
     case 277661:
       subject = "Teams - " + subject;
       index = 12;
-
       break;
     default:
       console.error("Invalid itemId");
