@@ -318,7 +318,7 @@ async function createQuickCall(subject, clientId, itemId) {
 
       break;
     case 277661:
-      subject = "Teams Message - " + subject;
+      subject = "Teams - " + subject;
       index = 12;
 
       break;
