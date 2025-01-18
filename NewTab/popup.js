@@ -109,7 +109,7 @@ function createLoginPage() {
   loginForm.appendChild(passwordInput);
   loginForm.appendChild(loginButton);
   loginOverlay.appendChild(loginForm);
-  document.body.appendChild(loginOverlay);
+  document.querySelector("#buttons").appendChild(loginOverlay);
 }
 function newLogin() {
   createLoginPage();
@@ -358,6 +358,13 @@ async function createQuickCall(subject, clientId, itemId) {
     }
     const result = await response.json();
     console.log(result);
+
+    const requestIdDiv = document.createElement("p");
+    requestIdDiv.textContent = `Incident Created ID: ${result.requestId}`;
+    document.body.appendChild(requestIdDiv);
+    setTimeout(() => {
+      window.close();
+    }, 3000);
   } catch (error) {
     if (error.message.includes("401")) {
       createLoginPage();
