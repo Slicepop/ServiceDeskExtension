@@ -251,7 +251,7 @@ async function searchUser(event) {
 
             break;
           default:
-            console.error("Somethign went wrong");
+            console.error("Something went wrong");
             break;
         }
       };
@@ -328,7 +328,7 @@ async function createQuickCall(subject, clientId, itemId) {
   }
   const raw = JSON.stringify({
     requestProcessIndex: "INCIDENT",
-    clientId: clientId, // Dynamically use the clientId from loginOBJ
+    clientId: clientId,
     subject: subject,
     itemId: itemId,
     classfication: 54,
@@ -336,7 +336,6 @@ async function createQuickCall(subject, clientId, itemId) {
   });
 
   const requestOptions = {
-    // Use POST to send a body
     method: "POST",
     headers: {
       Authorization: `Bearer ${localStorage.getItem("authToken")}`,
@@ -347,7 +346,6 @@ async function createQuickCall(subject, clientId, itemId) {
     referrerPolicy: "strict-origin-when-cross-origin",
 
     mode: "cors",
-    // quickCallId: 10,
   };
 
   try {
@@ -360,30 +358,27 @@ async function createQuickCall(subject, clientId, itemId) {
     if (!response.ok) {
       throw new Error(`Request failed: ${response.statusText}`);
     }
-    const result = await response.json(); // Parse response as JSON
+    const result = await response.json();
     console.log(result);
   } catch (error) {
     if (error.message.includes("401")) {
-      // Optionally, you can trigger a re-login or show a login prompt here
       createLoginPage();
     } else {
-      console.error("Error:", error.message); // Improved error logging
+      console.error("Error:", error.message);
     }
   }
 }
 const toggleDark = document.querySelector("#theme-toggle");
 var flip = localStorage.getItem("isDarkMode");
-// Dark mode
 toggleDark.addEventListener("click", function () {
   console.log(flip);
-  // Toggle the 'dark-mode' class on the body element
   if (localStorage.getItem("isDarkMode") === "true") {
     toggleDark.src = chrome.runtime.getURL("./sun-solid.svg");
   } else {
     toggleDark.src = chrome.runtime.getURL("./moon-solid.svg");
   }
   document.body.classList.toggle("dark-mode");
-  // Optionally, store the user's theme preference in localStorage
+
   const isDarkMode = document.body.classList.contains("dark-mode");
   localStorage.setItem("isDarkMode", isDarkMode);
 });
