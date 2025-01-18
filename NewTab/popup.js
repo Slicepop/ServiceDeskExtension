@@ -35,7 +35,7 @@ if (refreshToken) {
 
 function createLoginPage() {
   const loginOverlay = document.createElement("div");
-  
+
   loginOverlay.id = "loginOverlay";
   loginOverlay.style.position = "fixed";
   loginOverlay.style.top = "0";
@@ -74,7 +74,7 @@ function createLoginPage() {
   passwordLabel.style.marginBottom = "5px";
 
   const passwordInput = document.createElement("input");
-  passwordInput.id = "pwordField"
+  passwordInput.id = "pwordField";
   passwordInput.type = "password";
   passwordInput.style.width = "100%";
   passwordInput.style.marginBottom = "10px";
@@ -145,25 +145,26 @@ async function login() {
       requestOptions
     );
     if (!response.ok) {
-      const passwordInput = document.querySelector("#pwordField")
-      const errorMSG = document.createElement("P")
-      errorMSG.textContent = "Incorrect Username or Password. Please try again."
-      passwordInput.append(errorMSG)
+      const passwordInput = document.querySelector("#pwordField");
+      const errorMSG = document.createElement("P");
+      errorMSG.textContent =
+        "Incorrect Username or Password. Please try again.";
+      passwordInput.append(errorMSG);
     } else {
-    document.querySelector("#loginOverlay").remove();
-    const result = await response.text();
-    const loginOBJ = JSON.parse(result);
-    console.log(loginOBJ);
-    const authToken = loginOBJ.token;
-    localStorage.setItem("authToken", authToken);
-    const refreshToken = loginOBJ.refreshToken;
-    localStorage.setItem("refreshToken", refreshToken);
-    hidePage();
+      document.querySelector("#loginOverlay").remove();
+      const result = await response.text();
+      const loginOBJ = JSON.parse(result);
+      console.log(loginOBJ);
+      const authToken = loginOBJ.token;
+      localStorage.setItem("authToken", authToken);
+      const refreshToken = loginOBJ.refreshToken;
+      localStorage.setItem("refreshToken", refreshToken);
+      hidePage();
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
     if (error.message.includes("400")) {
-      console.log("Hey")
+      console.log("Hey");
       // Optionally, you can trigger a re-login or show a login prompt here
       createLoginPage();
     }
@@ -239,14 +240,14 @@ async function searchUser(event) {
         localStorage.removeItem("lastSearch");
         switch (button.textContent) {
           case "Phone Call":
-            createPhoneQuickCall(subject, clientId, 10, 277657);
+            createQuickCall(subject, clientId, 277657);
             break;
           case "Walk-Up":
-            createPhoneQuickCall(subject, clientId, 11, 277658);
+            createQuickCall(subject, clientId, 277658);
 
             break;
           case "Teams Message":
-            createPhoneQuickCall(subject, clientId, 12, 277661);
+            createQuickCall(subject, clientId, 277661);
 
             break;
           default:
@@ -305,7 +306,26 @@ async function searchUser(event) {
 //   } catch (error) {
 //     console.debug("Error:", error);
 //   }
-async function createPhoneQuickCall(subject, clientId, index, itemId) {
+async function createQuickCall(subject, clientId, itemId) {
+  switch (itemId) {
+    case 277657:
+      subject = "Phone Call - " + subject;
+      index = 10;
+      break;
+    case 277658:
+      subject = "Walk Up - " + subject;
+      index = 11;
+
+      break;
+    case 277661:
+      subject = "Teams Message - " + subject;
+      index = 12;
+
+      break;
+    default:
+      console.error("Invalid itemId");
+      return;
+  }
   const raw = JSON.stringify({
     requestProcessIndex: "INCIDENT",
     clientId: clientId, // Dynamically use the clientId from loginOBJ
