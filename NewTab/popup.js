@@ -271,15 +271,19 @@ button2.forEach((button) => {
 
     switch (button.textContent) {
       case "Phone Call":
-        createQuickCall(subject, clientId, 277657);
+        if (clientId && subject) {
+          createQuickCall(subject, clientId, 277657);
+        }
         break;
       case "Walk-Up":
-        createQuickCall(subject, clientId, 277658);
-
+        if (clientId && subject) {
+          createQuickCall(subject, clientId, 277658);
+        }
         break;
       case "Teams Message":
-        createQuickCall(subject, clientId, 277661);
-
+        if (clientId && subject) {
+          createQuickCall(subject, clientId, 277661);
+        }
         break;
       default:
         console.error("Something went wrong");
