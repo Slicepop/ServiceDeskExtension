@@ -1,37 +1,58 @@
-// chrome.runtime.sendMessage({ action: "requestToken" }, (response) => {
-//   if (response && response.token) {
-//     console.log("Token received from background script:", response.token);
-//     localStorage.setItem("authToken", response.token);
-//   } else {
-//     console.error("Failed to receive token from background script");
-//   }
-// });
+// https://support.wmed.edu/servicedesk-apidocs/
 
-const refreshToken = localStorage.getItem("refreshToken");
-if (refreshToken) {
-  fetch("https://support.wmed.edu/LiveTime/services/v1/auth/tokens", {
-    method: "POST",
+checkAuth();
+
+async function checkAuth() {
+  //
+  const requestOptions = {
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("authToken")}`,
     },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data && data.token) {
-        localStorage.setItem("authToken", data.token);
-        localStorage.setItem("refreshToken", data.refreshToken);
-        console.log("New token received and stored:", data.token);
-      } else {
-        console.error("Failed to refresh token");
-      }
-    })
-    .catch((error) => {
-      console.error("Error refreshing token:", error);
-    });
-} else {
-  newLogin();
+    redirect: "follow",
+  };
+  try {
+    const response = await fetch(
+      "https://support.wmed.edu/LiveTime/services/v1/user/client/findusers?internalOnly=true&clientTypes=8&searchTerm=Soffset=0&limit=10&locale=en-US",
+      requestOptions
+    );
+    if (response.ok) {
+      return true;
+    } else {
+      createLoginPage();
+      return false;
+    }
+  } catch (error) {
+    createLoginPage();
+    return false;
+  }
 }
+// if (authorized == false) {
+//   console.log("FALSEEEE");
+//   setTimeout(() => {
+//     fetch("https://support.wmed.edu/LiveTime/services/v1/auth/tokens", {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//         Authorization: localStorage.getItem("refreshToken"),
+//       },
+//     })
+//       .then((response) => response.json())
+//       .then((data) => {
+//         if (data && data.token) {
+//           localStorage.setItem("authToken", data.token);
+//           localStorage.setItem("refreshToken", data.refreshToken);
+//           console.log("New token received and stored:", data.token);
+//         } else {
+//           createLoginPage();
+//         }
+//       })
+//       .catch((error) => {
+//         createLoginPage();
+//       });
+//   }, 2000);
+// }
 
 function createLoginPage() {
   const loginOverlay = document.createElement("div");
@@ -111,9 +132,6 @@ function createLoginPage() {
   loginOverlay.appendChild(loginForm);
   document.querySelector("#buttons").appendChild(loginOverlay);
 }
-function newLogin() {
-  createLoginPage();
-}
 
 function hidePage() {
   document.querySelector("#loginOverlay").style.display = "none";
@@ -121,10 +139,7 @@ function hidePage() {
 
 async function login() {
   const storedToken = localStorage.getItem("refreshToken");
-  if (storedToken) {
-    hidePage();
-    return;
-  }
+
   const jsonData = {
     username: username,
     password: password,
@@ -145,29 +160,29 @@ async function login() {
       requestOptions
     );
     if (!response.ok) {
-      const passwordInput = document.querySelector("#pwordField");
       const errorMSG = document.createElement("P");
+      errorMSG.id = "err";
       errorMSG.textContent =
         "Incorrect Username or Password. Please try again.";
-      passwordInput.append(errorMSG);
+
+      if (document.querySelector("#err")) {
+        document.querySelector("#err").remove();
+        setTimeout(() => {
+          document.querySelector("#loginOverlay > div").append(errorMSG);
+        }, 200);
+      } else {
+        document.querySelector("#loginOverlay > div").append(errorMSG);
+      }
     } else {
       document.querySelector("#loginOverlay").remove();
-      const result = await response.text();
-      const loginOBJ = JSON.parse(result);
-      console.log(loginOBJ);
-      const authToken = loginOBJ.token;
-      localStorage.setItem("authToken", authToken);
-      const refreshToken = loginOBJ.refreshToken;
-      localStorage.setItem("refreshToken", refreshToken);
-      hidePage();
     }
+    const result = await response.text();
+    const loginOBJ = JSON.parse(result);
+    console.log(loginOBJ);
+    localStorage.setItem("refreshToken", loginOBJ.refreshToken);
+    localStorage.setItem("authToken", loginOBJ.token);
   } catch (error) {
     console.log(error);
-    if (error.message.includes("400")) {
-      console.log("Hey");
-      // Optionally, you can trigger a re-login or show a login prompt here
-      createLoginPage();
-    }
   }
 }
 
@@ -208,7 +223,10 @@ async function searchUser(event) {
         "&offset=0&limit=10&locale=en-US",
       requestOptions
     );
-
+    if (!response.ok) {
+      createLoginPage();
+      return;
+    }
     const JSONresponse = await response.json();
     results = JSONresponse.results;
     const resultConatiner = document.querySelector("#resultBox");
@@ -216,6 +234,7 @@ async function searchUser(event) {
 
     results.forEach((result) => {
       const resultItem = document.createElement("p");
+      resultItem.className = "result";
       resultItem.innerHTML = result.fullName;
       resultItem.style.cursor = "pointer";
       resultItem.onclick = function () {
@@ -227,12 +246,13 @@ async function searchUser(event) {
       };
       resultConatiner.appendChild(resultItem);
     });
-    console.log(results[0].clientId);
+    console.log(results[0].clientId + "ASD237");
   } catch (error) {
-    if (error.message.includes("401")) {
-      // Optionally, you can trigger a re-login or show a login prompt here
-      createLoginPage();
-    }
+    // if (!response.ok) {
+    //   console.log(error);
+    //   // Optionally, you can trigger a re-login or show a login prompt here
+    //   createLoginPage();
+    // }
     const resultConatiner = document.querySelector("#resultBox");
     resultConatiner.innerHTML = "<p>No results found</p>";
 
@@ -354,7 +374,8 @@ async function createQuickCall(subject, clientId, itemId) {
       requestOptions
     );
     if (!response.ok) {
-      throw new Error(`Request failed: ${response.statusText}`);
+      createLoginPage();
+      return;
     }
     const result = await response.json();
     console.log(result);
