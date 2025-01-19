@@ -384,8 +384,8 @@ async function createQuickCall(subject, clientId, itemId) {
     const result = await response.json();
     console.log(result);
 
-    const requestIdDiv = document.createElement("p");
-    requestIdDiv.textContent = `Incident Created ID: ${result.requestId}`;
+    const requestIdDiv = document.createElement("div");
+    requestIdDiv.innerHTML = `<p style="display: inline;">Incident Created ID: </p><a href="https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=${result.requestId}" target="_blank">${result.requestId}</a>`;
     document.body.appendChild(requestIdDiv);
     setTimeout(() => {
       window.close();
