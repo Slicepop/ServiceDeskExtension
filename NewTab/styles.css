@@ -22,6 +22,7 @@ button.dark-mode {
 }
 
 #theme-toggle {
+  cursor: pointer;
   float: right;
   width: auto;
   margin: 15px;

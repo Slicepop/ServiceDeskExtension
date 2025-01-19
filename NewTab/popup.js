@@ -3,7 +3,7 @@
 checkAuth();
 
 async function checkAuth() {
-  //
+  //This function runs a search to see if the current authentication token is valid, if not, login page is shown
   const requestOptions = {
     method: "GET",
     headers: {
