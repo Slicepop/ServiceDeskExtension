@@ -29,7 +29,12 @@ window.onfocus = function () {
     }
   }
 };
-
+const requestButton = document.querySelector(
+  "#zsd_navbar_menus > ul.navbar-nav.mr-auto > li:nth-child(2) > a"
+);
+if (requestButton) {
+  requestButton.href = "/LiveTime/WebObjects/LiveTime";
+}
 const requestTitle = document.querySelector("#request-subject-text");
 const requestUser = document.querySelector("#customer-search-input");
 function updateTitle() {
