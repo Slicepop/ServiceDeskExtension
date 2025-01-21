@@ -20,6 +20,7 @@ body.dark-mode {
 button.dark-mode {
   background: #3d3d3d;
   color: whitesmoke;
+  border-radius: 4px;
 }
 
 #theme-toggle {
