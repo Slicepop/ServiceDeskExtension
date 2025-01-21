@@ -29,7 +29,12 @@ window.onfocus = function () {
     }
   }
 };
-
+const requestButton = document.querySelector(
+  "#zsd_navbar_menus > ul.navbar-nav.mr-auto > li:nth-child(2) > a"
+);
+if (requestButton) {
+  requestButton.href = "/LiveTime/WebObjects/LiveTime";
+}
 const requestTitle = document.querySelector("#request-subject-text");
 const requestUser = document.querySelector("#customer-search-input");
 function updateTitle() {
@@ -349,7 +354,7 @@ function replaceLinks() {
               td.textContent.trim() == "Open" ||
               td.textContent.trim() == "In Progress" ||
               td.textContent.trim() == "Waiting for customer" ||
-              td.textContent.trim().includes == "On Hold"
+              td.textContent.trim().includes("On Hold")
             ) {
               if (!tbodyElement.querySelector("textarea")) {
                 const textTD = document.createElement("td");
@@ -604,3 +609,21 @@ observer.observe(document.body, {
   childList: true,
   subtree: true,
 });
+function getLocalStorageToken() {
+  const token = localStorage.getItem("token");
+  if (token) {
+    console.log("Token found:", token);
+    return token;
+  } else {
+    console.error("Token not found in localStorage");
+    return null;
+  }
+}
+
+// chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+//   if (request.action === "requestToken") {
+//     const token = getLocalStorageToken();
+//     console.log("ASD");
+//     sendResponse({ token });
+//   }
+// });
