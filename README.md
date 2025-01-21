@@ -45,7 +45,7 @@ _Extension Pop-Up in Dark Mode, click moon/sun to switch_
 #### **Known Issues**
 
 - Release of 1/2/25 12:33 PM - Issue of "Changes you made may not be saved." popup on close mitigated by changing when request list needs to be refreshed. Now happens when save modal pops up. Removing beforeunload event which triggered said popup
-- Release of 1/21/25 10:00 AM - Issue of logging out when refreshing should be solved, service desk adds /LiveTime/WebObjects/LiveTime/wo/xx.xx.xxx when clicking requests which caused logging out. Changed link to be /LiveTime/WebObjects/LiveTime
+- Release of 1/21/25 10:00 AM - Issue of logging out when refreshing should be solved, service desk adds /LiveTime/WebObjects/LiveTime.woa/wo/xx.xx.xxx when clicking requests which caused logging out. Changed link to be /LiveTime/WebObjects/LiveTime
   <br>
   <br>
   <br>
