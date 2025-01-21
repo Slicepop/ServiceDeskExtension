@@ -17,7 +17,8 @@
 If you click on the extension icon a new menu wil show allowing you to quickly create quickcall tickets ie) Phone Call, Walk up, and Teams Message.
 
 ![alt text](./Popup.png)
-_Extension Pop-Up in Dark Mode click moon/sun to switch_
+
+_Extension Pop-Up in Dark Mode, click moon/sun to switch_
 
 1. Simply search in the top text box for the user and select in the result box that shows when searching
 2. Create a general description (this is what you enter after "Phone Call - " in the subject line)
