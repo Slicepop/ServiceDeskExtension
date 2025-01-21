@@ -13,12 +13,13 @@ body {
 /* Dark Mode */
 body.dark-mode {
   background-color: #3d3d3d;
+
   color: white;
 }
 
 button.dark-mode {
-  background-color: #333;
-  color: white;
+  background: #3d3d3d;
+  color: whitesmoke;
 }
 
 #theme-toggle {

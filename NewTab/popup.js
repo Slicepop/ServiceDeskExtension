@@ -408,17 +408,22 @@ toggleDark.addEventListener("click", function () {
     toggleDark.src = chrome.runtime.getURL("./moon-solid.svg");
   }
   document.body.classList.toggle("dark-mode");
-
+  quickCallButtons.forEach((button) => {
+    button.classList.toggle("dark-mode");
+  });
   const isDarkMode = document.body.classList.contains("dark-mode");
   localStorage.setItem("isDarkMode", isDarkMode);
 });
-
+const quickCallButtons = document.querySelectorAll("#myButton2");
 // On page load, check the saved preference and apply dark mode if needed
 document.addEventListener("DOMContentLoaded", function () {
   const savedTheme = localStorage.getItem("isDarkMode");
   if (savedTheme === "true") {
     toggleDark.src = chrome.runtime.getURL("./moon-solid.svg");
     document.body.classList.add("dark-mode");
+    quickCallButtons.forEach((button) => {
+      button.classList.add("dark-mode");
+    });
   } else {
     toggleDark.src = chrome.runtime.getURL("./sun-solid.svg");
   }
