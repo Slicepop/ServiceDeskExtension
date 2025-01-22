@@ -203,9 +203,13 @@ if (lastSearch) {
   const inputEvent = new Event("input");
   searchItem.dispatchEvent(inputEvent);
 }
-searchItem.addEventListener("input", async function (event) {
-  localStorage.setItem("lastSearch", event.target.value);
-  searchUser(event);
+let debounceTimeout;
+searchItem.addEventListener("input", function (event) {
+  clearTimeout(debounceTimeout);
+  debounceTimeout = setTimeout(async function () {
+    localStorage.setItem("lastSearch", event.target.value);
+    searchUser(event);
+  }, 500);
 });
 async function searchUser(event) {
   const requestOptions = {
