@@ -1,7 +1,30 @@
 // https://support.wmed.edu/servicedesk-apidocs/
 
 checkAuth();
-
+async function refreshToken() {
+  try {
+    const respond = await fetch(
+      "https://support.wmed.edu/LiveTime/services/v1/auth/tokens",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+        },
+      }
+    );
+    if (respond.ok) {
+      const data = await respond.json();
+      localStorage.setItem("authToken", data.token);
+      localStorage.setItem("refreshToken", data.refreshToken);
+      return true;
+    }
+  } catch (error) {
+    createLoginPage();
+  }
+  createLoginPage();
+  return false;
+}
 async function checkAuth() {
   //This function runs a search to see if the current authentication token is valid, if not, login page is shown
   const requestOptions = {
@@ -20,28 +43,7 @@ async function checkAuth() {
     if (response.ok) {
       return true;
     } else {
-      try {
-        const respond = await fetch(
-          "https://support.wmed.edu/LiveTime/services/v1/auth/tokens",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
-            },
-          }
-        );
-        if (respond.ok) {
-          const data = await respond.json();
-          localStorage.setItem("authToken", data.token);
-          localStorage.setItem("refreshToken", data.refreshToken);
-          return true;
-        }
-      } catch (error) {
-        createLoginPage();
-      }
-      createLoginPage();
-      return false;
+      refreshToken();
     }
   } catch (error) {
     createLoginPage();
@@ -248,7 +250,8 @@ async function searchUser(event) {
       requestOptions
     );
     if (!response.ok) {
-      createLoginPage();
+      refreshToken();
+      searchUser(event);
       return;
     }
     const JSONresponse = await response.json();
@@ -402,7 +405,8 @@ async function createQuickCall(subject, clientId, itemId) {
       requestOptions
     );
     if (!response.ok) {
-      createLoginPage();
+      refreshToken();
+      createQuickCall(subject, clientId, itemId);
       return;
     }
     const result = await response.json();
@@ -416,7 +420,8 @@ async function createQuickCall(subject, clientId, itemId) {
     }, 3000);
   } catch (error) {
     if (error.message.includes("401")) {
-      createLoginPage();
+      refreshToken();
+      createQuickCall(subject, clientId, itemId);
     } else {
       console.error("Error:", error.message);
     }
