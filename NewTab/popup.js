@@ -20,6 +20,26 @@ async function checkAuth() {
     if (response.ok) {
       return true;
     } else {
+      try {
+        const respond = await fetch(
+          "https://support.wmed.edu/LiveTime/services/v1/auth/tokens",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+            },
+          }
+        );
+        if (respond.ok) {
+          const data = await respond.json();
+          localStorage.setItem("authToken", data.token);
+          localStorage.setItem("refreshToken", data.refreshToken);
+          return true;
+        }
+      } catch (error) {
+        createLoginPage();
+      }
       createLoginPage();
       return false;
     }
@@ -31,13 +51,13 @@ async function checkAuth() {
 // if (authorized == false) {
 //   console.log("FALSEEEE");
 //   setTimeout(() => {
-//     fetch("https://support.wmed.edu/LiveTime/services/v1/auth/tokens", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//         Authorization: localStorage.getItem("refreshToken"),
-//       },
-//     })
+// fetch("https://support.wmed.edu/LiveTime/services/v1/auth/tokens", {
+//   method: "POST",
+//   headers: {
+//     "Content-Type": "application/json",
+//     Authorization: localStorage.getItem("refreshToken"),
+//   },
+// })
 //       .then((response) => response.json())
 //       .then((data) => {
 //         if (data && data.token) {
