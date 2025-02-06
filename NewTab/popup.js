@@ -270,6 +270,24 @@ async function searchUser(event) {
         localStorage.setItem("clientId", result.clientId);
         const inputEvent = new Event("input");
         searchItem.dispatchEvent(inputEvent);
+        var copyUserButton = document.querySelector("#copyButton");
+        if (!copyUserButton) {
+          copyUserButton = document.createElement("img");
+          copyUserButton.id = "copyButton";
+
+          document.querySelector("#searchAndCopy").append(copyUserButton);
+        }
+        copyUserButton.src = "./Copy.png";
+        const savedTheme = localStorage.getItem("isDarkMode");
+        if (savedTheme === "true") {
+          copyUserButton.classList.add("dark-mode");
+        } else {
+          copyUserButton.classList.remove("dark-mode");
+        }
+        copyUserButton.onclick = function () {
+          navigator.clipboard.writeText(result.userName);
+          copyUserButton.src = "./Check.png";
+        };
       };
       resultConatiner.appendChild(resultItem);
     });
@@ -437,6 +455,10 @@ toggleDark.addEventListener("click", function () {
     toggleDark.src = chrome.runtime.getURL("./moon-solid.svg");
   }
   document.body.classList.toggle("dark-mode");
+  const copyUser = document.querySelector("#copyButton");
+  if (copyUser) {
+    copyUser.classList.toggle("dark-mode");
+  }
   quickCallButtons.forEach((button) => {
     button.classList.toggle("dark-mode");
   });
