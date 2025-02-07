@@ -14,7 +14,7 @@
 
 ### **Extension Pop-Up**
 
-If you click on the extension icon a new menu wil show allowing you to quickly create quickcall tickets ie) Phone Call, Walk up, and Teams Message.
+If you click on the extension icon a new menu wil show allowing you to quickly create quickcall tickets ie. Phone Call, Walk up, and Teams Message.
 
 ![alt text](./Popup.png)
 
@@ -24,6 +24,8 @@ _Extension Pop-Up in Dark Mode, click moon/sun to switch_
 2. Create a general description (this is what you enter after "Phone Call - " in the subject line)
 3. Click on which quickcall you would like this ticket to be created as
 4. Once successfully created a confirmation message will appear that links to the newly created ticket, window will close after 3 seconds
+
+- A button will appear next to the user input felid when you select a user from the results that copies the username to the clipboard
 
 ### **Requests list i.e. Incident and My Tasks**
 
@@ -40,12 +42,14 @@ _Extension Pop-Up in Dark Mode, click moon/sun to switch_
 - "Personal Note" added into additional details section
   <br>
 
-**If you run into any issues please let me know!**
+### **If you run into any issues please let me know!**
 
 #### **Known Issues**
 
-- Release of 1/2/25 12:33 PM - Issue of "Changes you made may not be saved." popup on close mitigated by changing when request list needs to be refreshed. Now happens when save modal pops up. Removing beforeunload event which triggered said popup
-- Release of 1/21/25 10:00 AM - Issue of logging out when refreshing should be solved, service desk adds /LiveTime/WebObjects/LiveTime.woa/wo/xx.xx.xxx when clicking requests which caused logging out. Changed link to be /LiveTime/WebObjects/LiveTime
+- Release of 1/2/25 12:33 PM - Issue of "Changes you made may not be saved." popup on close mitigated by changing when request list needs to be refreshed. Now happens when save modal pops up. Removing beforeunload event which triggered said popup - **SOLVED**
+- Release of 1/21/25 10:00 AM - Issue of logging out when refreshing should be solved, service desk adds /LiveTime/WebObjects/LiveTime.woa/wo/xx.xx.xxx when clicking requests which caused logging out. Changed link to be /LiveTime/WebObjects/LiveTime - **SOLVED**
+- Release of 1/24/25 3:35 PM - Authentication token now refreshes on expiration, allowing users to be logged in throughout the entire work-day - **SOLVED**
+- Issue with the extension not loading when opening multiple request tabs (fixes when tab is refreshed) - **WIP**
   <br>
   <br>
   <br>
