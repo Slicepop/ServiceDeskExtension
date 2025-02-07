@@ -85,9 +85,7 @@ input {
 #searchAndCopy {
   align-items: center;
 }
-#copyButton.dark-mode {
-  filter: invert(1);
-}
+
 .result {
   cursor: pointer;
   margin-bottom: -5px;

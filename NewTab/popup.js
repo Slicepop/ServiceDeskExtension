@@ -414,44 +414,6 @@ button2.forEach((button) => {
   };
 });
 
-// Removed unused function logisn and variable authToken
-
-// async funct
-// }ion createRequest(loginOBJ, subject, requestDescription) {
-//   const raw = JSON.stringify({
-//     subject: subject,
-//     requestProcessIndex: "INCIDENT",
-//     requestDescription: "<p>" + requestDescription + "</p><div></div>",
-//     clientId: loginOBJ.clientId, // Use the clientId from loginOBJ
-//     classification: 54,
-//     itemId: 277657,
-//     source: "USER_PORTAL",
-//   });
-
-//   const requestOptions2 = {
-//     method: "POST",
-//     headers: {
-//       // Authorization: `Bearer ${authToken}`,
-//       "Content-Type": "application/json",
-//       Connection: "keep-alive",
-//     },
-//     body: raw,
-//     redirect: "follow",
-//   };
-
-//   try {
-//     const response = await fetch(
-//       "https://support.wmed.edu/LiveTime/services/v1/customer/requests",
-//       requestOptions2
-//     );
-//     if (!response.ok) {
-//       throw new Error(`Request failed: ${response.statusText}`);
-//     }
-//     const result = await response.text();
-//     console.log(result);
-//   } catch (error) {
-//     console.debug("Error:", error);
-//   }
 async function createQuickCall(subject, clientId, itemId) {
   switch (itemId) {
     case 277657:
