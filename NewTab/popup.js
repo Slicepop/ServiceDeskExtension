@@ -1,5 +1,5 @@
 // https://support.wmed.edu/servicedesk-apidocs/
-
+document.querySelector("#search").focus();
 checkAuth();
 async function refreshToken() {
   try {
@@ -233,7 +233,18 @@ searchItem.addEventListener("input", function (event) {
     searchUser(event);
   }, 500);
 });
+let currentIndex = -1; // Tracks the currently highlighted result
+let resultsArray = []; // Stores fetched results
+let navigatingWithKeys = false; // Tracks if you're navigating via keys
+
+// Trigger search when the search input changes.
+document.getElementById("search").addEventListener("input", searchUser);
+
 async function searchUser(event) {
+  // If you're navigating with keys, skip updating the search.
+  if (navigatingWithKeys) return;
+
+  const searchTerm = event.target.value;
   const requestOptions = {
     method: "GET",
     headers: {
@@ -242,68 +253,134 @@ async function searchUser(event) {
     },
     redirect: "follow",
   };
+
   try {
     const response = await fetch(
       "https://support.wmed.edu/LiveTime/services/v1/user/client/findusers?internalOnly=true&clientTypes=8&searchTerm=" +
-        event.target.value +
+        encodeURIComponent(searchTerm) +
         "&offset=0&limit=10&locale=en-US",
       requestOptions
     );
+
     if (!response.ok) {
       refreshToken();
       searchUser(event);
       return;
     }
-    const JSONresponse = await response.json();
-    results = JSONresponse.results;
-    const resultConatiner = document.querySelector("#resultBox");
-    resultConatiner.innerHTML = "";
 
-    results.forEach((result) => {
+    const JSONresponse = await response.json();
+    resultsArray = JSONresponse.results;
+    const resultContainer = document.querySelector("#resultBox");
+    resultContainer.innerHTML = "";
+
+    resultsArray.forEach((result, index) => {
       const resultItem = document.createElement("p");
       resultItem.className = "result";
-      resultItem.innerHTML = result.fullName;
+      resultItem.textContent = result.fullName;
       resultItem.style.cursor = "pointer";
+
+      // Click selection – when a result is clicked, select the user.
       resultItem.onclick = function () {
-        console.log(result.fullName);
-        searchItem.value = result.fullName;
-        localStorage.setItem("clientId", result.clientId);
-        const inputEvent = new Event("input");
-        searchItem.dispatchEvent(inputEvent);
-        var copyUserButton = document.querySelector("#copyButton");
-        if (!copyUserButton) {
-          copyUserButton = document.createElement("img");
-          copyUserButton.id = "copyButton";
-
-          document.querySelector("#searchAndCopy").append(copyUserButton);
-        }
-        copyUserButton.src = "./Copy.png";
-        const savedTheme = localStorage.getItem("isDarkMode");
-        if (savedTheme === "true") {
-          copyUserButton.classList.add("dark-mode");
-        } else {
-          copyUserButton.classList.remove("dark-mode");
-        }
-        copyUserButton.onclick = function () {
-          navigator.clipboard.writeText(result.userName);
-          copyUserButton.src = "./Check.png";
-        };
+        selectUser(result);
       };
-      resultConatiner.appendChild(resultItem);
-    });
-    console.log(results[0].clientId + "ASD237");
-  } catch (error) {
-    // if (!response.ok) {
-    //   console.log(error);
-    //   // Optionally, you can trigger a re-login or show a login prompt here
-    //   createLoginPage();
-    // }
-    const resultConatiner = document.querySelector("#resultBox");
-    resultConatiner.innerHTML = "<p>No results found</p>";
 
-    console.log("Input event detected:", event.target.value);
+      resultContainer.appendChild(resultItem);
+    });
+
+    // Reset highlighted index.
+    currentIndex = -1;
+  } catch (error) {
+    const resultContainer = document.querySelector("#resultBox");
+    resultContainer.innerHTML = "<p>No results found</p>";
+    console.error("Error fetching users:", error);
   }
 }
+
+// Keyboard Navigation for the search input.
+document.getElementById("search").addEventListener("keydown", function (event) {
+  const resultItems = document.querySelectorAll("#resultBox .result");
+
+  // Use Tab or ArrowDown to cycle forward through results.
+  if (event.key === "Tab" || event.key === "ArrowDown") {
+    event.preventDefault(); // Prevent default focus change.
+    navigatingWithKeys = true;
+    if (resultsArray.length === 0) return;
+    currentIndex = (currentIndex + 1) % resultsArray.length;
+    updateHighlight(resultItems);
+    return;
+  }
+
+  // Use ArrowUp to cycle backward.
+  if (event.key === "ArrowUp") {
+    event.preventDefault();
+    navigatingWithKeys = true;
+    if (resultsArray.length === 0) return;
+    currentIndex =
+      (currentIndex - 1 + resultsArray.length) % resultsArray.length;
+    updateHighlight(resultItems);
+    return;
+  }
+
+  // Allow selection of the highlighted result with Enter or Space.
+  if ((event.key === "Enter" || event.key === " ") && currentIndex !== -1) {
+    event.preventDefault();
+    navigatingWithKeys = false;
+    selectUser(resultsArray[currentIndex]);
+    return;
+  }
+});
+
+// Allow normal typing by resetting the navigation flag for keys that are not navigation.
+document.getElementById("search").addEventListener("keyup", function (event) {
+  if (!["Tab", "ArrowDown", "ArrowUp", " "].includes(event.key)) {
+    navigatingWithKeys = false;
+  }
+});
+
+// Updates visual highlighting of search results.
+function updateHighlight(resultItems) {
+  resultItems.forEach((item, index) => {
+    if (index === currentIndex) {
+      item.classList.add("highlight");
+      // Optionally, update the search field with the highlighted name:
+      document.getElementById("search").value =
+        resultsArray[currentIndex].fullName;
+    } else {
+      item.classList.remove("highlight");
+    }
+  });
+}
+
+// Called when a user is selected (via click, Enter, or Space).
+function selectUser(result) {
+  const searchInput = document.getElementById("search");
+  searchInput.value = result.fullName;
+  localStorage.setItem("clientId", result.clientId);
+
+  // Dispatch an input event if needed for other logic.
+  searchInput.dispatchEvent(new Event("input"));
+
+  addCopyButton(result);
+
+  // Automatically focus the subject line after selection.
+  document.getElementById("subjectLine").focus();
+}
+
+// Adds (or updates) the copy button next to the search field.
+function addCopyButton(result) {
+  let copyUserButton = document.querySelector("#copyButton");
+  if (!copyUserButton) {
+    copyUserButton = document.createElement("img");
+    copyUserButton.id = "copyButton";
+    document.querySelector("#searchAndCopy").appendChild(copyUserButton);
+  }
+  copyUserButton.src = "./Copy.png";
+  copyUserButton.onclick = function () {
+    navigator.clipboard.writeText(result.userName);
+    copyUserButton.src = "./Check.png";
+  };
+}
+
 const button2 = document.querySelectorAll("#myButton2");
 button2.forEach((button) => {
   button.onclick = function () {

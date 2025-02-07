@@ -97,3 +97,12 @@ input {
 #copyButton.dark-mode {
   filter: invert(1);
 }
+.result {
+  cursor: pointer;
+}
+
+.result.highlight {
+  outline-style: solid;
+  outline-width: 0.5px;
+  color: white;
+}
