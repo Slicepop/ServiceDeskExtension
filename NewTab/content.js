@@ -150,6 +150,11 @@ if (window.location.href.includes("New&requestId=")) {
 
 function fixCSS() {
   if (window.location.href.includes("New&requestId=")) {
+    const ExpandedNoteReply = document.querySelector("#expandnotenoneditable");
+    if (ExpandedNoteReply) {
+      ExpandedNoteReply.style.resize = "vertical";
+      ExpandedNoteReply.style.maxHeight = "none";
+    }
     // const addNote = document.querySelector(
     //   "#addnoteModal > div > div:nth-child(1) > div.modal-body.col-lg-12.col-xl-12.col-md-12.col-sm-12.col-12"
     // );
