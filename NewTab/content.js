@@ -150,6 +150,36 @@ if (window.location.href.includes("New&requestId=")) {
 
 function fixCSS() {
   if (window.location.href.includes("New&requestId=")) {
+    const informationTag = document.querySelector(
+      "#request-general-detail > div > div:nth-child(2) > div:nth-child(1) > div > div > div > div:nth-child(1) > em"
+    );
+    const newElement = document.createElement("i");
+    if (informationTag) {
+      newElement.className = informationTag.className;
+      newElement.style.cssText = informationTag.style.cssText;
+      newElement.style.cursor = "pointer";
+      newElement.style.pointerEvents = "all";
+      newElement.style.marginTop = "40px";
+      newElement.style.marginLeft = "10px";
+      informationTag.parentNode.replaceChild(newElement, informationTag);
+    }
+    const informationInfo = document.querySelector("#tooltip_info");
+    if (informationInfo) {
+      const labels = document.querySelectorAll(
+        'span[_ngcontent-ng-c548543592=""] > label[_ngcontent-ng-c548543592=""]'
+      );
+      labels.forEach((label) => {
+        label.style.cursor = "text";
+      });
+      newElement.onclick = function () {
+        if (informationInfo.style.display != "block") {
+          informationInfo.style.display = "block";
+        } else {
+          informationInfo.style.display = "none";
+        }
+        console.log("k");
+      };
+    }
     const ExpandedNoteReply = document.querySelector("#expandnotenoneditable");
     if (ExpandedNoteReply) {
       ExpandedNoteReply.style.resize = "vertical";
