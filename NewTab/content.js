@@ -149,6 +149,14 @@ if (window.location.href.includes("New&requestId=")) {
 }
 
 function fixCSS() {
+  const requestFilterCard = document.querySelector("#requestfiltercard");
+  if (requestFilterCard) {
+    const selects = requestFilterCard.querySelectorAll("select");
+    selects.forEach((select) => {
+      select.style.resize = "vertical";
+      select.style.maxHeight = "none";
+    });
+  }
   if (window.location.href.includes("New&requestId=")) {
     const informationTag = document.querySelector(
       "#request-general-detail > div > div:nth-child(2) > div:nth-child(1) > div > div > div > div:nth-child(1) > em"
