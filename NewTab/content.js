@@ -182,10 +182,18 @@ function fixCSS() {
       newElement.onclick = function () {
         if (informationInfo.style.display != "block") {
           informationInfo.style.display = "block";
+          document.addEventListener("click", function handler(event) {
+            if (
+              !newElement.contains(event.target) &&
+              !informationInfo.contains(event.target)
+            ) {
+              informationInfo.style.display = "none";
+              document.removeEventListener("click", handler);
+            }
+          });
         } else {
           informationInfo.style.display = "none";
         }
-        console.log("k");
       };
     }
     const ExpandedNoteReply = document.querySelector("#expandnotenoneditable");
