@@ -108,6 +108,8 @@ function createLoginPage() {
 
   const usernameInput = document.createElement("input");
   usernameInput.type = "text";
+  usernameInput.id = "userField";
+
   usernameInput.style.width = "100%";
   usernameInput.style.marginBottom = "10px";
 
@@ -152,7 +154,8 @@ function createLoginPage() {
   loginForm.appendChild(passwordInput);
   loginForm.appendChild(loginButton);
   loginOverlay.appendChild(loginForm);
-  document.querySelector("#buttons").appendChild(loginOverlay);
+  document.body.appendChild(loginOverlay);
+  usernameInput.focus();
 }
 
 function hidePage() {
@@ -186,6 +189,7 @@ async function login() {
       errorMSG.id = "err";
       errorMSG.textContent =
         "Incorrect Username or Password. Please try again.";
+      document.querySelector("#userField").focus();
 
       if (document.querySelector("#err")) {
         document.querySelector("#err").remove();
