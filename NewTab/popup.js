@@ -442,7 +442,7 @@ async function createQuickCall(subject, clientId, itemId) {
     subject: subject,
     itemId: itemId,
     classfication: 54,
-    source: "USER_PORTAL",
+    source: "WIDGET",
   });
 
   const requestOptions = {
