@@ -308,16 +308,6 @@ async function searchUser(event) {
 document.getElementById("search").addEventListener("keydown", function (event) {
   const resultItems = document.querySelectorAll("#resultBox .result");
 
-  // If there's a last search stored, allow Tab to move to the next field
-  if (
-    (localStorage.getItem("lastSearch") ||
-      localStorage.getItem("lastSearch") != "") &&
-    event.key === "Tab"
-  ) {
-    navigatingWithKeys = false;
-    return; // Let Tab work as normal
-  }
-
   // Use Tab or ArrowDown to cycle forward through results.
   if (event.key === "ArrowDown" || event.key === "Tab") {
     event.preventDefault(); // Prevent default focus change.
