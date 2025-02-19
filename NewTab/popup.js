@@ -1,4 +1,8 @@
 // https://support.wmed.edu/servicedesk-apidocs/
+if (localStorage.getItem("lastSearch") === "") {
+  localStorage.removeItem("lastSearch");
+  localStorage.removeItem("clientId");
+}
 document.querySelector("#search").focus();
 checkAuth();
 async function refreshToken() {
