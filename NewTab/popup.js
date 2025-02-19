@@ -319,7 +319,7 @@ document.getElementById("search").addEventListener("keydown", function (event) {
   }
 
   // Use Tab or ArrowDown to cycle forward through results.
-  if (event.key === "ArrowDown") {
+  if (event.key === "ArrowDown" || event.key === "Tab") {
     event.preventDefault(); // Prevent default focus change.
     navigatingWithKeys = true;
     if (resultsArray.length === 0) return;
