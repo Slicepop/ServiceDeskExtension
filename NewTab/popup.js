@@ -308,9 +308,14 @@ async function searchUser(event) {
 document.getElementById("search").addEventListener("keydown", function (event) {
   const resultItems = document.querySelectorAll("#resultBox .result");
 
+  // If there are no results and Tab is pressed, allow default behavior
+  if (resultItems.length === 0 && event.key === "Tab") {
+    return; // Let the browser handle it
+  }
+
   // Use Tab or ArrowDown to cycle forward through results.
   if (event.key === "ArrowDown" || event.key === "Tab") {
-    event.preventDefault(); // Prevent default focus change.
+    event.preventDefault(); // Prevent default focus change **only if results exist**
     navigatingWithKeys = true;
     if (resultsArray.length === 0) return;
     currentIndex = (currentIndex + 1) % resultsArray.length;
