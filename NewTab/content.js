@@ -49,7 +49,7 @@ function updateTitle() {
       try {
         document.title += " - " + requestUser.value;
       } catch (error) {
-        document.title = "ERROR fetching title, Refresh";
+        location.reload();
       }
     } else {
       document.title = requestTitle.textContent.substring(0, 61) + "...";
