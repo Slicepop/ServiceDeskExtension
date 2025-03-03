@@ -568,7 +568,16 @@ function replaceLinks() {
         pTag.style.textDecoration = "none";
         pTag.style.cursor = "default";
       });
-
+      pTag.onauxclick = function (event) {
+        if (event.button === 1) {
+          // Check if the middle mouse button was clicked
+          window.open(
+            "https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=" +
+              link.textContent.trim(),
+            "_blank"
+          );
+        }
+      };
       pTag.onclick = function () {
         window.open(
           "https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=" +

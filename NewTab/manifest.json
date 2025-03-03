@@ -1,8 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Service Desk Upgrade",
-  "version": "2.0.14",
-  "description": "Modify specific link behavior to open in a new tab.",
+  "version": "2.0.15",
   "permissions": ["activeTab"],
 
   "action": {
