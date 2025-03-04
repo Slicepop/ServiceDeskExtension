@@ -570,6 +570,10 @@ function replaceLinks() {
           descriptionDiv.style.position = "absolute";
           descriptionDiv.style.maxWidth = "56vw";
           descriptionDiv.style.overflow = "auto";
+          descriptionDiv.style.margin = "5px";
+          descriptionDiv.style.borderRadius = "10px";
+          descriptionDiv.style.boxShadow = "0px 4px 8px rgba(0, 0, 0, 0.41)";
+          descriptionDiv.style.outline = "1px solid #ccc";
           descriptionDiv.style.maxHeight = "40vh";
           descriptionDiv.style.whiteSpace = "pre-wrap";
           descriptionDiv.style.backgroundColor = "#ffff";
