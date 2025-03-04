@@ -563,21 +563,55 @@ function replaceLinks() {
       pTag.addEventListener("mouseover", () => {
         pTag.style.textDecoration = "underline";
         pTag.style.cursor = "pointer";
+
+        // Show description after 3 seconds
+        const hoverTimeout = setTimeout(async () => {
+          const descriptionDiv = document.createElement("div");
+          descriptionDiv.style.position = "absolute";
+          descriptionDiv.style.maxWidth = "56vw";
+          descriptionDiv.style.overflow = "auto";
+          descriptionDiv.style.maxHeight = "40vh";
+          descriptionDiv.style.whiteSpace = "pre-wrap";
+          descriptionDiv.style.backgroundColor = "#ffff";
+          descriptionDiv.style.border = "1px solid #ccc";
+          descriptionDiv.style.padding = "5px";
+          descriptionDiv.style.pointerEvents = "all";
+
+          descriptionDiv.style.zIndex = "1000";
+          descriptionDiv.innerHTML = await getItemDescription(
+            pTag.textContent.trim()
+          );
+
+          document.body.appendChild(descriptionDiv);
+          console.log("appended");
+          // Position the description div near the pTag
+          const rect = pTag.getBoundingClientRect();
+          descriptionDiv.style.top = `${rect.bottom + window.scrollY}px`;
+          descriptionDiv.style.left = `${rect.left + window.scrollX}px`;
+
+          pTag.addEventListener("mouseout", () => {
+            if (!descriptionDiv.matches(":hover")) {
+              descriptionDiv.remove();
+            }
+          });
+          // Show description when hovering over the description div
+
+          descriptionDiv.addEventListener("mouseout", (event) => {
+            if (!descriptionDiv.contains(event.relatedTarget)) {
+              descriptionDiv.remove();
+            }
+          });
+        }, 800);
+
+        pTag.addEventListener("mouseout", () => {
+          clearTimeout(hoverTimeout);
+        });
       });
       pTag.addEventListener("mouseout", () => {
         pTag.style.textDecoration = "none";
         pTag.style.cursor = "default";
       });
-      pTag.onauxclick = function (event) {
-        if (event.button === 1) {
-          // Check if the middle mouse button was clicked
-          window.open(
-            "https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=" +
-              link.textContent.trim(),
-            "_blank"
-          );
-        }
-      };
+      pTag.onauxclick;
       pTag.onclick = function () {
         window.open(
           "https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=" +
@@ -591,6 +625,53 @@ function replaceLinks() {
     }
   });
 }
+async function getItemDescription(itemID) {
+  let description = "";
+
+  try {
+    const response = await fetch(
+      "https://support.wmed.edu/LiveTime/services/v1/user/requests/" +
+        itemID +
+        "/basic",
+      {
+        headers: {
+          accept: "application/json, text/plain, */*",
+          "accept-language": "en-US,en;q=0.5",
+          "sec-ch-ua":
+            '"Not(A:Brand";v="99", "Brave";v="133", "Chromium";v="133"',
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": '"Windows"',
+          "sec-fetch-dest": "empty",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "same-origin",
+          "sec-gpc": "1",
+          "zsd-source": "LT",
+        },
+        referrer:
+          "https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=" +
+          itemID,
+        referrerPolicy: "strict-origin-when-cross-origin",
+        method: "GET",
+        mode: "cors",
+        credentials: "include",
+      }
+    );
+
+    // Check if the response is OK (status code in range 200-299)
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    const data = await response.json();
+    description = data.description || "No description available";
+    return description;
+  } catch (error) {
+    console.error("Error fetching description:", error);
+    description = "Error fetching description";
+    return description;
+  }
+}
+
 const test = document.querySelector(
   "#accordion0 > tr:nth-child(1) > td:nth-child(1) > input[type=checkbox]"
 );
