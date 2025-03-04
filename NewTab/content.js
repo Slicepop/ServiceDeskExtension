@@ -414,7 +414,6 @@ function replaceLinks() {
                 textTD.colSpan = "10";
                 const privateNote = document.createElement("textarea");
                 textTD.setAttribute("_ngcontent-ng-c4256737322", "");
-                // privateNote.style.height = "30px";
                 const replyMSG_EL =
                   tbodyElement.querySelector("tr:nth-child(2)");
                 if (replyMSG_EL) {
@@ -455,7 +454,6 @@ function replaceLinks() {
                 privateNote.style.marginTop = "-15px";
                 privateNote.style.marginLeft = "5px";
                 privateNote.style.resize = "both";
-                // privateNote.style.transform = "scale(0.8)";
                 const trEl = document.createElement("tr");
                 trEl.setAttribute("_ngcontent-ng-c4256737322", "");
                 trEl.style.boxSizing = "border-box";
@@ -468,22 +466,13 @@ function replaceLinks() {
                   emptyTD.textContent = "";
                   emptyTD.style.padding = "0px";
                   emptyTD.setAttribute("_ngcontent-ng-c4256737322", "");
-                  // emptyTD.style.transform = "scale(0.8)";
                   emptyTD.style.height = "10px";
                   trEl.append(emptyTD);
                 }
                 trEl.append(textTD);
 
-                // if (privateNote.value === "") {
-                //   privateNote.style.width = "80px";
-                // } else {
-                //   privateNote.style.width = noteObjecta.Width || "auto";
-
-                //   privateNote.style.width = privateNote.scrollWidth + 5 + "px";
-                // }
                 privateNote.style.width = noteObjecta.Width || "auto";
                 privateNote.style.height = noteObjecta.Height || "30px";
-                // privateNote.style.height = `${privateNote.scrollHeight + 5}px`;
 
                 const resizeObserver = new ResizeObserver(() => {
                   if (privateNote.value != "") {
@@ -501,24 +490,6 @@ function replaceLinks() {
                 resizeObserver.observe(privateNote);
                 privateNote.addEventListener("input", () => {
                   removeUnusedKeys();
-                  // if (privateNote.value === "") {
-                  //   privateNote.style.height = "30px";
-                  // } else {
-                  //   privateNote.style.height = "auto";
-                  //   privateNote.style.height = `${
-                  //     privateNote.scrollHeight + 5
-                  //   }px`;
-                  // }
-                  // console.log(privateNote.style.maxHeight);
-                  // console.log(privateNote.scrollHeight);
-                  // if (
-                  //   privateNote.style.maxHeight >=
-                  //   privateNote.scrollHeight + 5
-                  // ) {
-                  //   privateNote.style.maxHeight = `${
-                  //     privateNote.scrollHeight + 5
-                  //   }px`;
-                  // }
                   if (privateNote.value === "") {
                     localStorage.removeItem(requestId);
                   } else {
@@ -533,7 +504,72 @@ function replaceLinks() {
                   }
                 });
               }
-              // Remove tickets from local storage that are not in the list
+            }
+
+            // Add import/export buttons
+            const importButton = document.createElement("button");
+            importButton.textContent = "Import Notes";
+            importButton.style.marginRight = "10px";
+            importButton.onclick = () => {
+              const input = document.createElement("input");
+              input.type = "file";
+              input.accept = ".json";
+              input.onchange = (event) => {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                  const notes = JSON.parse(e.target.result);
+                  for (const [key, value] of Object.entries(notes)) {
+                    localStorage.setItem(key, JSON.stringify(value));
+                  }
+                  alert("Notes imported successfully!");
+                  location.reload();
+                };
+                reader.readAsText(file);
+              };
+              input.click();
+            };
+
+            const exportButton = document.createElement("button");
+            exportButton.textContent = "Export Notes";
+            exportButton.id = "export";
+            importButton.style.backgroundColor = "#333";
+            importButton.style.color = "#fff";
+            importButton.style.border = "1px solid #555";
+            importButton.style.borderRadius = "5px";
+            importButton.style.padding = "5px 10px";
+
+            exportButton.style.backgroundColor = "#333";
+            exportButton.style.color = "#fff";
+            exportButton.style.border = "1px solid #555";
+            exportButton.style.borderRadius = "5px";
+            exportButton.style.padding = "5px 10px";
+            exportButton.onclick = () => {
+              const notes = {};
+              for (const key of Object.keys(localStorage)) {
+                const value = localStorage.getItem(key);
+                if (value && value.startsWith('{"note')) {
+                  notes[key] = JSON.parse(value);
+                }
+              }
+              const blob = new Blob([JSON.stringify(notes, null, 2)], {
+                type: "application/json",
+              });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = "notes.json";
+              a.click();
+              URL.revokeObjectURL(url);
+            };
+
+            const container = document.querySelector(
+              "body > div.toolbar_wrapper > ul"
+            ); // Replace with actual container element
+            if (container && !document.querySelector("#export")) {
+              container.appendChild(importButton);
+              container.appendChild(exportButton);
+
               const storedKeys = Object.keys(localStorage);
               // storedKeys.forEach((key) => {
               //   if (
