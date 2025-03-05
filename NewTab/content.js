@@ -6,6 +6,9 @@
  * The "Save and Close" button will close the window after a delay when clicked.
  */
 
+var darkReaderActive =
+  document.documentElement.getAttribute("data-darkreader-scheme") === "dark";
+
 const myTasks = document.querySelector(
   "#rightpanel > zsd-user-requestlist > div.row.rowoverride > div.mb-3.col-10 > ul > li.requesttypeheader.ml-0"
 );
@@ -99,8 +102,17 @@ function addPrivate() {
     privNote.style.outlineStyle = "solid";
     privNote.style.outlineWidth = ".25px";
     privNote.style.outlineColor = "#63fbf0";
-    privNote.style.color = "#63fbf0";
-    privNote.style.backgroundColor = "rgba(32, 32, 32, 0.8)";
+    if (darkReaderActive) {
+      privNote.style.color = "#63fbf0";
+      privNote.style.backgroundColor = "rgba(32, 32, 32, 0.8)";
+      console.log("Dark mode active: Applied dark styles to privateNote");
+    } else {
+      privNote.style.color = "#3a948d";
+      privNote.style.placeholderColor = "#423f3f";
+
+      privNote.style.backgroundColor = "rgba(255, 255, 255, 0)";
+      console.log("Dark mode inactive: Applied light styles to privateNote");
+    }
     privNote.style.borderRadius = "5px";
     privNote.style.transform = "scale(.85)";
     const noteObject = JSON.parse(localStorage.getItem(requestId) || "{}");
@@ -147,8 +159,16 @@ if (window.location.href.includes("New&requestId=")) {
     descriptionArea.style.height = "300px";
   }
 }
-
 function fixCSS() {
+  const darkreaderEl =
+    document.documentElement.getAttribute("data-darkreader-scheme") === "dark";
+
+  if (darkreaderEl) {
+    darkReaderActive = true;
+  } else {
+    darkReaderActive = false;
+  }
+
   const requestFilterCard = document.querySelector("#requestfiltercard");
   if (requestFilterCard) {
     const selects = requestFilterCard.querySelectorAll("select");
@@ -332,7 +352,11 @@ function fixCSS() {
         saveClose.style.outlineStyle = "solid";
         saveClose.style.outlineWidth = ".15px";
         saveClose.style.borderRadius = "2.5px";
-        saveClose.style.background = "rgba(0, 0, 0, 0.49)";
+        if (darkReaderActive) {
+          saveClose.style.background = "rgba(0, 0, 0, 0)";
+        } else {
+          saveClose.style.background = "#0069d9";
+        }
         saveClose.style.padding = "2px";
         const container = document.querySelector(
           "#request_general_container > div > div.card-header.general-card-header > button"
@@ -447,9 +471,20 @@ function replaceLinks() {
                 privateNote.style.outlineWidth = ".25px";
 
                 privateNote.style.maxWidth = "32vw";
+                privateNote.style.backgroundColor = "rgba(230, 230, 230, 0)";
                 privateNote.style.outlineColor = "#63fbf0";
-                privateNote.style.color = "#63fbf0";
-                privateNote.style.backgroundColor = "rgba(32, 32, 32, 0.8)";
+                if (darkReaderActive) {
+                  privateNote.style.color = "#63fbf0";
+                  console.log(
+                    "Dark mode active: Applied dark styles to privateNote"
+                  );
+                } else {
+                  privateNote.style.color = "#3a948d";
+                  privateNote.style.placeholderColor = "#423f3f";
+                  console.log(
+                    "Dark mode inactive: Applied light styles to privateNote"
+                  );
+                }
                 privateNote.style.borderRadius = "5px";
                 privateNote.style.marginTop = "-15px";
                 privateNote.style.marginLeft = "5px";
@@ -614,9 +649,7 @@ function replaceLinks() {
           descriptionDiv.style.whiteSpace = "pre-wrap";
           descriptionDiv.style.backgroundColor = "#ffff";
           descriptionDiv.style.border = "1px solid #ccc";
-          descriptionDiv.style.padding = "5px";
           descriptionDiv.style.pointerEvents = "all";
-
           descriptionDiv.style.zIndex = "1000";
           descriptionDiv.innerHTML = await getItemDescription(
             pTag.textContent.trim()
@@ -624,7 +657,6 @@ function replaceLinks() {
 
           document.body.appendChild(descriptionDiv);
           console.log("appended");
-          // Position the description div near the pTag
           const rect = pTag.getBoundingClientRect();
           descriptionDiv.style.top = `${rect.bottom + window.scrollY}px`;
           descriptionDiv.style.left = `${rect.left + window.scrollX}px`;
@@ -634,7 +666,6 @@ function replaceLinks() {
               descriptionDiv.remove();
             }
           });
-          // Show description when hovering over the description div
 
           descriptionDiv.addEventListener("mouseout", (event) => {
             if (!descriptionDiv.contains(event.relatedTarget)) {
@@ -713,6 +744,7 @@ async function getItemDescription(itemID) {
 
     const data = await response.json();
     description = data.description || "No description available";
+
     return description;
   } catch (error) {
     console.error("Error fetching description:", error);
