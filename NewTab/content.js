@@ -102,16 +102,13 @@ function addPrivate() {
     privNote.style.outlineStyle = "solid";
     privNote.style.outlineWidth = ".25px";
     privNote.style.outlineColor = "#63fbf0";
+    privNote.style.backgroundColor = "rgba(255, 255, 255, 0)";
+
     if (darkReaderActive) {
       privNote.style.color = "#63fbf0";
-      privNote.style.backgroundColor = "rgba(32, 32, 32, 0.8)";
-      console.log("Dark mode active: Applied dark styles to privateNote");
     } else {
       privNote.style.color = "#3a948d";
       privNote.style.placeholderColor = "#423f3f";
-
-      privNote.style.backgroundColor = "rgba(255, 255, 255, 0)";
-      console.log("Dark mode inactive: Applied light styles to privateNote");
     }
     privNote.style.borderRadius = "5px";
     privNote.style.transform = "scale(.85)";
@@ -475,15 +472,9 @@ function replaceLinks() {
                 privateNote.style.outlineColor = "#63fbf0";
                 if (darkReaderActive) {
                   privateNote.style.color = "#63fbf0";
-                  console.log(
-                    "Dark mode active: Applied dark styles to privateNote"
-                  );
                 } else {
                   privateNote.style.color = "#3a948d";
                   privateNote.style.placeholderColor = "#423f3f";
-                  console.log(
-                    "Dark mode inactive: Applied light styles to privateNote"
-                  );
                 }
                 privateNote.style.borderRadius = "5px";
                 privateNote.style.marginTop = "-15px";
