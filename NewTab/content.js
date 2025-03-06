@@ -151,7 +151,7 @@ const KPIReport = document.querySelector(
 const reporttech = document.querySelector(
   "#submenu > li:nth-child(5) > a > span"
 );
-if (KPIReport.innerText.trim() == "KPI Reports") {
+if (KPIReport && KPIReport.innerText.trim() == "KPI Reports") {
   reporttech.click();
 }
 
