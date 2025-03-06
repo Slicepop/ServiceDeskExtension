@@ -138,6 +138,14 @@ function addPrivate() {
     }
   }
 }
+if (window.location.href.includes("/reports")) {
+  document
+    .querySelector(
+      "#zsd_navbar_menus > ul.navbar-nav.mr-auto > li:nth-child(7) > a > span"
+    )
+    .click();
+}
+
 if (window.location.href.includes("New&requestId=")) {
   addPrivate();
   updateTitle();
@@ -735,7 +743,6 @@ async function getItemDescription(itemID) {
 
     const data = await response.json();
     description = data.description || "No description available";
-
     return description;
   } catch (error) {
     console.error("Error fetching description:", error);
