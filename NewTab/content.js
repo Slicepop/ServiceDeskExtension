@@ -145,6 +145,15 @@ if (window.location.href.includes("/reports")) {
     )
     .click();
 }
+const KPIReport = document.querySelector(
+  "#kpiReportsForm > div > div.windowTitleBar > div"
+);
+const reporttech = document.querySelector(
+  "#submenu > li:nth-child(5) > a > span"
+);
+if (KPIReport.innerText.trim() == "KPI Reports") {
+  reporttech.click();
+}
 
 if (window.location.href.includes("New&requestId=")) {
   addPrivate();
