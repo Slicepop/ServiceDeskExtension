@@ -151,8 +151,86 @@ const KPIReport = document.querySelector(
 const reporttech = document.querySelector(
   "#submenu > li:nth-child(5) > a > span"
 );
-if (KPIReport && KPIReport.innerText.trim() == "KPI Reports") {
+if (
+  KPIReport &&
+  KPIReport.innerText.trim() == "KPI Reports" &&
+  localStorage.getItem("reportDefaults") == "TRUE"
+) {
   reporttech.click();
+}
+const reporttech_ATAG = document.querySelector(
+  "#submenu > li:nth-child(5) > a"
+);
+const BottTR = document.querySelector(
+  "#technicianReportsForm > div > div.windowContent > div > table > tbody > tr:nth-child(5)"
+);
+if (BottTR) {
+  leftTD = document.createElement("td");
+  leftTD.align = "LEFT";
+  const AutoCheck = document.createElement("input");
+  AutoCheck.type = "checkbox";
+  if (localStorage.getItem("reportDefaults") === "TRUE") {
+    AutoCheck.checked = true;
+  }
+  AutoCheck.onchange = function () {
+    if (localStorage.getItem("reportDefaults") === "TRUE") {
+      localStorage.setItem("reportDefaults", "FALSE");
+    } else {
+      localStorage.setItem("reportDefaults", "TRUE");
+    }
+  };
+  leftTD.append(AutoCheck);
+  BottTR.append(leftTD);
+}
+if (
+  reporttech_ATAG &&
+  reporttech_ATAG.className == "active" &&
+  localStorage.getItem("reportDefaults") === "TRUE"
+) {
+  const changeEvent = new Event("change");
+  const technicianSelect = document.querySelector(
+    "#technicianReportsForm > div > div.windowContent > div > table > tbody > tr:nth-child(1) > td.fieldtext > select"
+  );
+  if (technicianSelect && technicianSelect.selectedIndex != 10) {
+    technicianSelect.selectedIndex = 10;
+    technicianSelect.dispatchEvent(changeEvent);
+  }
+  if (technicianSelect && technicianSelect.selectedIndex == 10) {
+    const Monday = getMondayOfCurrentWeek();
+    const formattedDate = Monday.toLocaleDateString("en-GB").replace(
+      /(\d{2})\/(\d{2})\/(\d{4})/,
+      "$2/$1/$3"
+    );
+    document.querySelector("#startDateUserTZ").value = formattedDate;
+    const Friday = getFridayOfCurrentWeek();
+    const formattedDate2 = Friday.toLocaleDateString("en-GB").replace(
+      /(\d{2})\/(\d{2})\/(\d{4})/,
+      "$2/$1/$3"
+    );
+    document.querySelector("#endDateUserTZ").value = formattedDate2;
+    document.querySelector(
+      "#technicianReportsForm > div > div.windowContent > div > table > tbody > tr:nth-child(4) > td.fieldtext > select"
+    ).selectedIndex = 13;
+  }
+}
+
+function getFridayOfCurrentWeek() {
+  const today = new Date();
+  const dayOfWeek = today.getDay(); // Sunday = 0, Monday = 1, etc.
+  const distanceToFriday = dayOfWeek <= 5 ? 5 - dayOfWeek : 12 - dayOfWeek; // Calculate how many days to add to get to Friday
+
+  today.setDate(today.getDate() + distanceToFriday);
+  today.setHours(0, 0, 0, 0); // Set time to the start of the day
+  return today;
+}
+function getMondayOfCurrentWeek() {
+  const today = new Date();
+  const dayOfWeek = today.getDay(); // Sunday = 0, Monday = 1, etc.
+  const distanceToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // If Sunday (0), move back 6 days, otherwise move back `dayOfWeek - 1`
+
+  today.setDate(today.getDate() - distanceToMonday);
+  today.setHours(0, 0, 0, 0); // Set time to the start of the day
+  return today;
 }
 
 if (window.location.href.includes("New&requestId=")) {
@@ -440,9 +518,9 @@ function replaceLinks() {
               requestIdArray.push(requestId);
             }
             if (
-              td.textContent.trim() == "Open" ||
-              td.textContent.trim() == "In Progress" ||
-              td.textContent.trim() == "Waiting for customer" ||
+              td.textContent.trim().includes("Open") ||
+              td.textContent.trim().includes("In Progress") ||
+              td.textContent.trim().includes("Waiting for customer") ||
               td.textContent.trim().includes("On Hold")
             ) {
               if (!tbodyElement.querySelector("textarea")) {
@@ -773,7 +851,7 @@ function removeUnusedKeys() {
       if (search && search.value == "") {
         const storedKeys = Object.keys(localStorage); // Get all keys from localStorage
         const requestIdSet = new Set(requestIdArray.map(String)); // Convert requestIdArray to Set of strings
-
+        console.log(requestIdSet);
         // First log all the stored keys and compare with the requestIdSet
         storedKeys.forEach((key) => {
           const value = localStorage.getItem(key);
