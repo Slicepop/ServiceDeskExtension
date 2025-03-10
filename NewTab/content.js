@@ -139,6 +139,10 @@ function addPrivate() {
   }
 }
 if (window.location.href.includes("/reports")) {
+  const link = document.createElement("link");
+  link.rel = "icon";
+  link.href = chrome.runtime.getURL("./favicon.ico");
+  document.head.appendChild(link);
   document
     .querySelector(
       "#zsd_navbar_menus > ul.navbar-nav.mr-auto > li:nth-child(7) > a > span"
