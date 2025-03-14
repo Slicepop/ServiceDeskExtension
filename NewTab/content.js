@@ -97,8 +97,6 @@ async function updateTitle() {
     } else {
       document.title = requestTitle.substring(0, 61) + "...";
     }
-  } else {
-    document.title = "ERROR fetching title, Refresh";
   }
 }
 const requestStatus = document.querySelector(
