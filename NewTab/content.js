@@ -40,24 +40,62 @@ const requestButton = document.querySelector(
 if (requestButton) {
   requestButton.href = "/LiveTime/WebObjects/LiveTime";
 }
-function updateTitle() {
-  const requestTitle = document.querySelector("#request-subject-text");
-  const requestUser = document.querySelector("#customer-search-input");
+async function updateTitle() {
+  var requestTitle = "";
+  var requestUser = "";
+  try {
+    const itemID = window.location.href.split("requestId=")[1];
+    const response = await fetch(
+      "https://support.wmed.edu/LiveTime/services/v1/user/requests/" +
+        itemID +
+        "/basic",
+      {
+        headers: {
+          accept: "application/json, text/plain, */*",
+          "accept-language": "en-US,en;q=0.5",
+          "sec-ch-ua":
+            '"Not(A:Brand";v="99", "Brave";v="133", "Chromium";v="133"',
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": '"Windows"',
+          "sec-fetch-dest": "empty",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "same-origin",
+          "sec-gpc": "1",
+          "zsd-source": "LT",
+        },
+        referrer:
+          "https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=" +
+          itemID,
+        referrerPolicy: "strict-origin-when-cross-origin",
+        method: "GET",
+        mode: "cors",
+        credentials: "include",
+      }
+    );
+    requestUser = document.querySelector("#customer-search-input").value;
+    // Check if the response is OK (status code in range 200-299)
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    const data = await response.json();
+
+    requestTitle = data.subject;
+  } catch (error) {
+    location.reload();
+  }
   if (requestTitle) {
-    if (
-      requestTitle.textContent.length > 10 &&
-      requestTitle.textContent.length < 64
-    ) {
-      document.title = requestTitle.textContent;
-    } else if (requestTitle.textContent.length < 64) {
-      document.title = requestTitle.textContent;
+    if (requestTitle.length > 10 && requestTitle.length < 64) {
+      document.title = requestTitle;
+    } else if (requestTitle.length < 64) {
+      document.title = requestTitle;
       try {
-        document.title += " - " + requestUser.value;
+        document.title += " - " + requestUser;
       } catch (error) {
         updateTitle();
       }
     } else {
-      document.title = requestTitle.textContent.substring(0, 61) + "...";
+      document.title = requestTitle.substring(0, 61) + "...";
     }
   } else {
     document.title = "ERROR fetching title, Refresh";
