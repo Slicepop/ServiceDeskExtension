@@ -5,19 +5,21 @@
  * If the current URL includes "New&requestId=", it modifies the behavior of the save button and adds a "Save and Close" button.
  * The "Save and Close" button will close the window after a delay when clicked.
  */
+const incident = document.querySelector(
+  "#rightpanel > zsd-user-requestlist > div.row.rowoverride > div.mb-3.col-10 > ul > li:nth-child(2) > span"
+);
 
+if (incident) {
+  setTimeout(() => {
+    incident.click();
+  }, 1);
+}
 var darkReaderActive =
   document.documentElement.getAttribute("data-darkreader-scheme") === "dark";
 
 const myTasks = document.querySelector(
   "#rightpanel > zsd-user-requestlist > div.row.rowoverride > div.mb-3.col-10 > ul > li.requesttypeheader.ml-0"
 );
-const incident = document.querySelector(
-  "#rightpanel > zsd-user-requestlist > div.row.rowoverride > div.mb-3.col-10 > ul > li:nth-child(2) > span"
-);
-if (incident) {
-  incident.click();
-}
 window.onfocus = function () {
   if (localStorage.getItem("refresh") == "true") {
     localStorage.setItem("refresh", "false");
@@ -38,9 +40,9 @@ const requestButton = document.querySelector(
 if (requestButton) {
   requestButton.href = "/LiveTime/WebObjects/LiveTime";
 }
-const requestTitle = document.querySelector("#request-subject-text");
-const requestUser = document.querySelector("#customer-search-input");
 function updateTitle() {
+  const requestTitle = document.querySelector("#request-subject-text");
+  const requestUser = document.querySelector("#customer-search-input");
   if (requestTitle) {
     if (
       requestTitle.textContent.length > 10 &&
@@ -52,7 +54,7 @@ function updateTitle() {
       try {
         document.title += " - " + requestUser.value;
       } catch (error) {
-        location.reload();
+        updateTitle();
       }
     } else {
       document.title = requestTitle.textContent.substring(0, 61) + "...";
@@ -237,7 +239,7 @@ function getMondayOfCurrentWeek() {
   return today;
 }
 
-if (window.location.href.includes("New&requestId=")) {
+if (window.location.href.includes("LookupRequest?")) {
   addPrivate();
   updateTitle();
   const descriptionArea = document.querySelector(
@@ -255,6 +257,7 @@ if (window.location.href.includes("New&requestId=")) {
     descriptionArea.style.height = "300px";
   }
 }
+
 function fixCSS() {
   const darkreaderEl =
     document.documentElement.getAttribute("data-darkreader-scheme") === "dark";
@@ -317,99 +320,7 @@ function fixCSS() {
       ExpandedNoteReply.style.resize = "vertical";
       ExpandedNoteReply.style.maxHeight = "none";
     }
-    // const addNote = document.querySelector(
-    //   "#addnoteModal > div > div:nth-child(1) > div.modal-body.col-lg-12.col-xl-12.col-md-12.col-sm-12.col-12"
-    // );
-    // if (addNote) {
-    //   const originalButton = document.querySelector("#createquickrequest");
 
-    //   if (originalButton && !document.querySelector(".overlay-button")) {
-    //     // Create the overlay button
-    //     const overlayButton = document.createElement("button");
-    //     overlayButton.classList.add("overlay-button");
-    //     overlayButton.style.opacity = "0";
-
-    //     // Append the overlay button to the same parent
-    //     const parent = originalButton.parentNode;
-    //     parent.style.position = "relative"; // Ensure the parent container is positioned
-    //     parent.appendChild(overlayButton);
-
-    //     // Match the position and size of the original button
-    //     const rect = originalButton.getBoundingClientRect();
-    //     overlayButton.style.position = "absolute";
-    //     overlayButton.style.top = `${originalButton.offsetTop - 10}px`;
-    //     overlayButton.style.left = `${originalButton.offsetLeft - 18}px`;
-    //     overlayButton.style.width = `${rect.width + 20}px`;
-    //     overlayButton.style.height = `${rect.height + 20}px`;
-
-    //     const changeStatus = document.querySelector(
-    //       "#changeRequestStatusCheckBox"
-    //     );
-    //     if (changeStatus) {
-    //       overlayButton.onclick = function () {
-    //         if (changeStatus.checked) {
-    //           const selectStatus = document.querySelector(
-    //             "#addnoteModal > div > div:nth-child(1) > div.modal-body.col-lg-12.col-xl-12.col-md-12.col-sm-12.col-12 > div.container-fluid.pl-0.pr-0 > div:nth-child(3) > div > div.col-xl-4.col-lg-4.col-md-12.col-sm-12.col-12.group-options-wrapper > div.change-status-wrapper > select"
-    //           );
-    //           if (
-    //             selectStatus &&
-    //             (selectStatus.selectedIndex == 0 ||
-    //               selectStatus.selectedIndex == 4 ||
-    //               selectStatus.selectedIndex == 5 ||
-    //               selectStatus.selectedIndex == 6 ||
-    //               selectStatus.selectedIndex == 7)
-    //           ) {
-    //             var tempStatus = selectStatus.selectedIndex;
-    //             var mainPageStatus = document.querySelector(
-    //               "#request-general-detail > div > div:nth-child(2) > div:nth-child(1) > div > div > div > div:nth-child(13) > div > select"
-    //             );
-    //             selectStatus.selectedIndex = mainPageStatus.selectedIndex;
-    //             setTimeout(() => {
-    //               originalButton.click();
-    //             }, 4000);
-    //             mainPageStatus.selectedIndex = tempStatus;
-    //             const saveButton = document.querySelector(
-    //               "#request_general_container > div > div.card-header.general-card-header > button"
-    //             );
-    //             setTimeout(() => {
-    //               // saveButton.click();
-
-    //               console.log("ASDssss");
-    //             }, 3500);
-    //           }
-    //         } else {
-    //           originalButton.click();
-    //         }
-    //       };
-    //     }
-    //   }
-    //   //   const editor = tinymce.get(
-    //   //     document.querySelector(
-    //   //       "#addnoteModal > div > div:nth-child(1) > div.modal-body.col-lg-12.col-xl-12.col-md-12.col-sm-12.col-12 > div.container-fluid.pl-0.pr-0 > div.form-group.col-xl-12.col-lg-12.col-md-12.col-xl-12.col-sm-12.col-12.mb-1.pl-0.pr-0 > zsd-tinymce > div > editor textarea"
-    //   //     ).id
-    //   //   );
-    //   //   if (editor) {
-    //   //     console.log("ASDSASD" + editor.getContent("ASDASDASDASD"));
-    //   //   } else {
-    //   //     console.log(editor);
-    //   //   }
-    // }
-
-    // if (addNote) {
-    //   const bodyElement = document.querySelector('body[id="tinymce"]');
-
-    //   if (bodyElement) {
-    //     // Update the content programmatically
-    //     bodyElement.innerHTML =
-    //       "This is new content<br>With line breaks<br>And more text.";
-    //     console.log("Editable content updated.");
-    //   } else {
-    //     console.error("Editable <body> element not found.");
-    //   }
-    // }
-    if (document.title != requestTitle.textContent) {
-      updateTitle();
-    }
     const SaveLoad = document.querySelector("#toast-container > div");
     if (SaveLoad) {
       localStorage.setItem("refresh", "true");
@@ -746,7 +657,6 @@ function replaceLinks() {
           );
 
           document.body.appendChild(descriptionDiv);
-          console.log("appended");
           const rect = pTag.getBoundingClientRect();
           descriptionDiv.style.top = `${rect.bottom + window.scrollY}px`;
           descriptionDiv.style.left = `${rect.left + window.scrollX}px`;
@@ -836,9 +746,7 @@ async function getItemDescription(itemID) {
     description = data.description || "No description available";
     return description;
   } catch (error) {
-    console.error("Error fetching description:", error);
-    description = "Error fetching description";
-    return description;
+    location.reload();
   }
 }
 
