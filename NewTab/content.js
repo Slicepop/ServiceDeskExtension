@@ -82,7 +82,7 @@ async function updateTitle() {
 
     requestTitle = data.subject;
   } catch (error) {
-    location.reload();
+    requestTitle = "Error fetching title";
   }
   if (requestTitle) {
     if (requestTitle.length > 10 && requestTitle.length < 64) {
