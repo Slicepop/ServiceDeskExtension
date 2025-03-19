@@ -276,6 +276,14 @@ function getMondayOfCurrentWeek() {
 }
 
 if (window.location.href.includes("LookupRequest?")) {
+  const favicon =
+    document.querySelector("link[rel~='icon']") ||
+    document.createElement("link");
+  favicon.rel = "icon";
+  favicon.href = chrome.runtime.getURL("./request.ico");
+  if (!favicon.parentNode) {
+    document.head.appendChild(favicon);
+  }
   addPrivate();
   updateTitle();
   const descriptionArea = document.querySelector(
