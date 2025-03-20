@@ -10,9 +10,7 @@
     "default_popup": "popup.html",
     "css": ["./styles.css"]
   },
-  "background": {
-    "page": "background.html"
-  },
+
   "host_permissions": ["https://*.wmed.edu/*"],
   "web_accessible_resources": [
     {

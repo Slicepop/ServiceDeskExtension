@@ -696,11 +696,24 @@ function replaceLinks() {
           descriptionDiv.style.border = "1px solid #ccc";
           descriptionDiv.style.pointerEvents = "all";
           descriptionDiv.style.zIndex = "1000";
-          descriptionDiv.innerHTML = await getItemDescription(
+          descriptionDiv.appendChild(await getNotes(pTag.textContent.trim()));
+          descriptionDiv.innerHTML += await getItemDescription(
             pTag.textContent.trim()
           );
-
           document.body.appendChild(descriptionDiv);
+          const noteToggles = document.querySelectorAll("#noteToggle");
+          noteToggles.forEach((toggle) => {
+            toggle.onclick = function () {
+              const noteDiv = toggle.parentElement.nextElementSibling;
+              if (noteDiv.style.display === "none") {
+                toggle.textContent = "∧";
+                noteDiv.style.display = "block";
+              } else {
+                toggle.textContent = "∨";
+                noteDiv.style.display = "none";
+              }
+            };
+          });
           const rect = pTag.getBoundingClientRect();
           descriptionDiv.style.top = `${rect.bottom + window.scrollY}px`;
           descriptionDiv.style.left = `${rect.left + window.scrollX}px`;
@@ -792,6 +805,107 @@ async function getItemDescription(itemID) {
   } catch (error) {
     location.reload();
   }
+}
+
+async function getNotes(requestID) {
+  objectOfNotes = {};
+  try {
+    const response = await fetch(
+      "https://support.wmed.edu/LiveTime/services/v1/user/requests/" +
+        requestID +
+        "/existingNotes",
+      {
+        headers: {
+          accept: "application/json, text/plain, */*",
+          "accept-language": "en-US,en;q=0.5",
+          "sec-ch-ua":
+            '"Not(A:Brand";v="99", "Brave";v="133", "Chromium";v="133"',
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": '"Windows"',
+          "sec-fetch-dest": "empty",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "same-origin",
+          "sec-gpc": "1",
+          "zsd-source": "LT",
+        },
+        referrer:
+          "https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=" +
+          requestID,
+        referrerPolicy: "strict-origin-when-cross-origin",
+        method: "GET",
+        mode: "cors",
+        credentials: "include",
+      }
+    );
+
+    // Check if the response is OK (status code in range 200-299)
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    const data = await response.json();
+    objectOfNotes = data;
+  } catch (error) {
+    console.log(error);
+  }
+  NotesContainer = document.createElement("div");
+  console.log(objectOfNotes);
+  for (const [key, value] of Object.entries(objectOfNotes)) {
+    if (value.description) {
+      const noteCell = document.createElement("div");
+      const noteToggle = document.createElement("p");
+      noteToggle.textContent = "∨";
+      noteToggle.style.cursor = "pointer";
+      noteToggle.style.borderRadius = "5px";
+      noteToggle.style.outlineStyle = "solid";
+      noteToggle.style.outlineWidth = ".25px";
+      noteToggle.style.marginTop = "10px";
+      noteToggle.style.padding = "0";
+      noteToggle.style.width = "20px";
+      noteToggle.style.height = "20px";
+      noteToggle.style.display = "flex";
+      noteToggle.style.alignItems = "center";
+      noteToggle.style.justifyContent = "center";
+      noteToggle.style.textAlign = "center";
+      noteToggle.style.color = "#63fbf0";
+      noteToggle.style.lineHeight = "20px"; // Ensures the text is vertically centered
+      noteToggle.id = "noteToggle";
+      const timestamp = document.createElement("p");
+      timestamp.textContent = value.noteDate;
+      const noteDiv = document.createElement("div");
+      noteDiv.className = "note";
+      const noteHeader = document.createElement("div");
+      noteHeader.style.display = "flex";
+      noteToggle.style.marginRight = "10px";
+      timestamp.style.margin = "0";
+      timestamp.style.padding = "0";
+      timestamp.style.color = "#333";
+      timestamp.style.fontSize = "14px";
+      timestamp.style.lineHeight = "20px";
+      timestamp.style.display = "flex";
+      timestamp.style.alignItems = "center";
+      timestamp.style.justifyContent = "center";
+      timestamp.style.textAlign = "center";
+      noteCell.appendChild(noteHeader);
+
+      noteHeader.appendChild(noteToggle);
+      noteHeader.appendChild(timestamp);
+      noteCell.appendChild(noteDiv);
+      noteDiv.innerHTML += "<br>" + value.description;
+      noteDiv.style.display = "none";
+      noteDiv.style.backgroundColor = "#f0f0f0";
+      noteDiv.style.padding = "10px";
+      noteDiv.style.borderRadius = "5px";
+      noteDiv.style.marginTop = "5px";
+
+      noteDiv.style.maxHeight = "250px";
+      noteDiv.style.overflow = "auto";
+      noteDiv.style.height = "auto";
+
+      NotesContainer.appendChild(noteCell);
+    }
+  }
+  return NotesContainer;
 }
 
 const test = document.querySelector(
