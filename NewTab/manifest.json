@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Service Desk Upgrade",
   "version": "2.5.0",
-  "permissions": ["activeTab"],
+  "permissions": ["activeTab", "offscreen"],
 
   "action": {
     "default_icon": "favicon.png",
@@ -10,6 +10,10 @@
     "default_popup": "popup.html",
     "css": ["./styles.css"]
   },
+  "background": {
+    "page": "background.html"
+  },
+  "host_permissions": ["https://*.wmed.edu/*"],
   "web_accessible_resources": [
     {
       "resources": ["saveClose.png", "popup.js", "favicon.ico", "request.ico"],
@@ -20,7 +24,7 @@
     {
       "matches": ["https://support.wmed.edu/LiveTime/WebObjects/*"],
       "js": ["content.js"],
-      "run at": "document_idle"
+      "run_at": "document_idle"
     }
   ]
 }
