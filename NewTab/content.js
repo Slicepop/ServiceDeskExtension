@@ -679,6 +679,7 @@ function replaceLinks() {
       openContainer.style.cursor = "pointer";
       openContainer.style.marginLeft = "10px";
       openContainer.style.marginRight = "10px";
+      openContainer.style.float = "right";
       if (darkReaderActive) {
         openContainer.style.filter = "invert(1)";
       } else {
@@ -698,11 +699,11 @@ function replaceLinks() {
       pTag.style.backgroundColor = "rgba(255, 255, 255, 0)";
       pTag.style.borderRadius = "5px";
       pTag.style.transform = "scale(.85)";
-
-      openContainer.addEventListener("click", () => {
+      pTag.addEventListener("mouseover", () => {
         pTag.style.textDecoration = "underline";
         pTag.style.cursor = "pointer";
-
+      });
+      openContainer.addEventListener("click", () => {
         // Show description after 3 seconds
         const hoverTimeout = setTimeout(async () => {
           if (
