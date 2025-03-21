@@ -14,7 +14,13 @@
   "host_permissions": ["https://*.wmed.edu/*"],
   "web_accessible_resources": [
     {
-      "resources": ["saveClose.png", "popup.js", "favicon.ico", "request.ico"],
+      "resources": [
+        "saveClose.png",
+        "popup.js",
+        "favicon.ico",
+        "request.ico",
+        "open.png"
+      ],
       "matches": ["https://support.wmed.edu/*"]
     }
   ],

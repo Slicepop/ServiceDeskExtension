@@ -467,7 +467,6 @@ function replaceLinks() {
         if (incident.className != "selectedtab") {
           const trElement = item.querySelector("tr");
           const tbodyElement = trElement.closest("tbody");
-
           const tdElements = trElement.querySelectorAll("td");
           tdElements.forEach((td) => {
             const requestId = trElement
@@ -673,10 +672,34 @@ function replaceLinks() {
         }
       });
       const pTag = document.createElement("p");
+      const openContainer = document.createElement("img");
+      openContainer.src = chrome.runtime.getURL("./open.png");
+      openContainer.style.width = "20px";
+      openContainer.style.height = "20px";
+      openContainer.style.cursor = "pointer";
+      openContainer.style.marginLeft = "10px";
+      openContainer.style.marginRight = "10px";
+      if (darkReaderActive) {
+        openContainer.style.filter = "invert(1)";
+      } else {
+        openContainer.style.filter = "none";
+      }
       pTag.textContent = link.textContent;
       pTag.style.color = "#07ada1";
       pTag.id = "requestId";
-      pTag.addEventListener("mouseover", () => {
+
+      pTag.style.margin = "0";
+      pTag.style.padding = "0";
+      pTag.style.boxSizing = "border-box";
+      pTag.style.cursor = "pointer";
+      pTag.style.textDecoration = "none";
+      pTag.style.display = "inline";
+      pTag.style.marginRight = "10px";
+      pTag.style.backgroundColor = "rgba(255, 255, 255, 0)";
+      pTag.style.borderRadius = "5px";
+      pTag.style.transform = "scale(.85)";
+
+      openContainer.addEventListener("click", () => {
         pTag.style.textDecoration = "underline";
         pTag.style.cursor = "pointer";
 
@@ -811,7 +834,7 @@ function replaceLinks() {
           exitButton.onclick = function () {
             containerDiv.remove();
           };
-        }, 400);
+        }, 1);
 
         pTag.addEventListener("mouseout", () => {
           clearTimeout(hoverTimeout);
@@ -840,6 +863,8 @@ function replaceLinks() {
       };
 
       link.parentNode.replaceChild(pTag, link);
+
+      pTag.parentElement.appendChild(openContainer);
       link.dataset.processed = "true";
     }
   });
