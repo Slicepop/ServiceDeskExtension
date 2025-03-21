@@ -682,6 +682,14 @@ function replaceLinks() {
 
         // Show description after 3 seconds
         const hoverTimeout = setTimeout(async () => {
+          if (
+            Array.from(
+              document.querySelectorAll("div[style*='position: absolute']")
+            ).some((div) => div.textContent.includes(pTag.textContent))
+          ) {
+            return;
+          }
+
           const containerDiv = document.createElement("div");
           const descriptionDivHeader = document.createElement("div");
           const descriptionDiv = document.createElement("div");
@@ -699,6 +707,9 @@ function replaceLinks() {
           incident?.addEventListener("click", removeAllContainers);
           myTasks?.addEventListener("click", removeAllContainers);
           containerDiv.style.position = "absolute";
+
+          containerDiv.style.Width = "30vw";
+          containerDiv.style.Height = "30vh";
           containerDiv.style.maxWidth = "80vw";
           containerDiv.style.maxHeight = "80vh";
           containerDiv.style.border = "1px solid #ccc";
@@ -712,6 +723,10 @@ function replaceLinks() {
 
           // Set some basic styles for the descriptionDivHeader
           descriptionDivHeader.id = "descriptionDivHeader";
+          descriptionDivHeader.style.position = "sticky";
+          descriptionDivHeader.style.top = "0";
+          descriptionDivHeader.style.left = "0";
+          descriptionDivHeader.style.right = "0";
           descriptionDivHeader.style.cursor = "move";
           descriptionDivHeader.style.height = "30px";
           descriptionDivHeader.style.backgroundColor = "gray";
