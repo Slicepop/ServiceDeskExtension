@@ -682,26 +682,84 @@ function replaceLinks() {
 
         // Show description after 3 seconds
         const hoverTimeout = setTimeout(async () => {
+          const containerDiv = document.createElement("div");
+          const descriptionDivHeader = document.createElement("div");
           const descriptionDiv = document.createElement("div");
-          descriptionDiv.style.position = "absolute";
-          descriptionDiv.style.maxWidth = "56vw";
-          descriptionDiv.style.overflow = "auto";
+          let isDragging = false;
+          let offsetX, offsetY;
+
+          // Set some basic styles for the containerDiv
+          const removeAllContainers = () => {
+            const openContainers = document.querySelectorAll(
+              "div[style*='position: absolute']"
+            );
+            openContainers.forEach((container) => container.remove());
+          };
+
+          incident?.addEventListener("click", removeAllContainers);
+          myTasks?.addEventListener("click", removeAllContainers);
+          containerDiv.style.position = "absolute";
+          containerDiv.style.maxWidth = "80vw";
+          containerDiv.style.maxHeight = "80vh";
+          containerDiv.style.border = "1px solid #ccc";
+          containerDiv.style.borderRadius = "10px";
+          containerDiv.style.boxShadow = "0px 4px 8px rgba(0, 0, 0, 0.41)";
+          containerDiv.style.backgroundColor = "#ffff";
+          containerDiv.style.overflow = "hidden";
+          containerDiv.style.pointerEvents = "all";
+          containerDiv.style.resize = "both"; // Allow resizing both horizontally and vertically
+          containerDiv.style.overflow = "auto"; // Ensure content is scrollable when resized
+
+          // Set some basic styles for the descriptionDivHeader
+          descriptionDivHeader.id = "descriptionDivHeader";
+          descriptionDivHeader.style.cursor = "move";
+          descriptionDivHeader.style.height = "30px";
+          descriptionDivHeader.style.backgroundColor = "gray";
+          descriptionDivHeader.style.color = "white";
+          descriptionDivHeader.style.display = "flex";
+          descriptionDivHeader.style.alignItems = "center";
+          descriptionDivHeader.style.padding = "0 10px";
+          descriptionDivHeader.textContent = pTag.textContent;
+
+          // Set some basic styles for the descriptionDiv
           descriptionDiv.style.padding = "5px";
-          descriptionDiv.style.borderRadius = "10px";
-          descriptionDiv.style.boxShadow = "0px 4px 8px rgba(0, 0, 0, 0.41)";
-          descriptionDiv.style.outline = "1px solid #ccc";
-          descriptionDiv.style.maxHeight = "40vh";
+          descriptionDiv.style.overflow = "auto";
           descriptionDiv.style.whiteSpace = "pre-wrap";
-          descriptionDiv.style.backgroundColor = "#ffff";
-          descriptionDiv.style.border = "1px solid #ccc";
-          descriptionDiv.style.pointerEvents = "all";
-          descriptionDiv.style.zIndex = "1000";
+
+          // Append the header and descriptionDiv to the containerDiv
+          containerDiv.appendChild(descriptionDivHeader);
+          containerDiv.appendChild(descriptionDiv);
+
+          // Append the containerDiv to the body
+          document.body.appendChild(containerDiv);
+
+          // Add drag functionality to the header
+          descriptionDivHeader.addEventListener("mousedown", (event) => {
+            isDragging = true;
+            offsetX = event.clientX - containerDiv.offsetLeft;
+            offsetY = event.clientY - containerDiv.offsetTop;
+            containerDiv.style.zIndex = "1000"; // Bring the div to the front while dragging
+          });
+
+          document.addEventListener("mousemove", (event) => {
+            if (isDragging) {
+              containerDiv.style.left = event.clientX - offsetX + "px";
+              containerDiv.style.top = event.clientY - offsetY + "px";
+            }
+          });
+
+          document.addEventListener("mouseup", () => {
+            isDragging = false;
+            containerDiv.style.zIndex = "1"; // Reset z-index
+          });
+
+          // Add content to the descriptionDiv
           descriptionDiv.appendChild(await getNotes(pTag.textContent.trim()));
-          descriptionDiv.innerHTML += await getItemDescription(
-            pTag.textContent.trim()
-          );
-          document.body.appendChild(descriptionDiv);
-          const noteToggles = document.querySelectorAll("#noteToggle");
+          descriptionDiv.innerHTML +=
+            "<hr>" + (await getItemDescription(pTag.textContent.trim()));
+
+          // Add toggle functionality for notes
+          const noteToggles = descriptionDiv.querySelectorAll("#noteToggle");
           noteToggles.forEach((toggle) => {
             toggle.onclick = function () {
               const noteDiv = toggle.parentElement.nextElementSibling;
@@ -714,21 +772,30 @@ function replaceLinks() {
               }
             };
           });
+
+          // Position the containerDiv near the pTag
           const rect = pTag.getBoundingClientRect();
-          descriptionDiv.style.top = `${rect.bottom + window.scrollY}px`;
-          descriptionDiv.style.left = `${rect.left + window.scrollX}px`;
+          containerDiv.style.top = `${rect.bottom + window.scrollY}px`;
+          containerDiv.style.left = `${rect.left + window.scrollX}px`;
 
-          pTag.addEventListener("mouseout", () => {
-            if (!descriptionDiv.matches(":hover")) {
-              descriptionDiv.remove();
-            }
-          });
+          // Add a close button to the header
+          const exitButton = document.createElement("button");
+          exitButton.textContent = "X";
+          exitButton.style.position = "absolute";
+          exitButton.style.top = "5px";
+          exitButton.style.right = "5px";
+          exitButton.style.backgroundColor = "transparent";
+          exitButton.style.color = "white";
+          exitButton.style.border = "none";
+          exitButton.style.borderRadius = "50%";
+          exitButton.style.width = "20px";
+          exitButton.style.height = "20px";
+          exitButton.style.cursor = "pointer";
+          descriptionDivHeader.appendChild(exitButton);
 
-          descriptionDiv.addEventListener("mouseout", (event) => {
-            if (!descriptionDiv.contains(event.relatedTarget)) {
-              descriptionDiv.remove();
-            }
-          });
+          exitButton.onclick = function () {
+            containerDiv.remove();
+          };
         }, 400);
 
         pTag.addEventListener("mouseout", () => {
@@ -813,7 +880,7 @@ async function getNotes(requestID) {
     const response = await fetch(
       "https://support.wmed.edu/LiveTime/services/v1/user/requests/" +
         requestID +
-        "/existingNotes",
+        "/notes",
       {
         headers: {
           accept: "application/json, text/plain, */*",
@@ -851,10 +918,11 @@ async function getNotes(requestID) {
   NotesContainer = document.createElement("div");
   console.log(objectOfNotes);
   for (const [key, value] of Object.entries(objectOfNotes)) {
-    if (value.description) {
+    if (value.notetext) {
       const noteCell = document.createElement("div");
       const noteToggle = document.createElement("p");
       noteToggle.textContent = "∨";
+      noteToggle.style.userSelect = "none";
       noteToggle.style.cursor = "pointer";
       noteToggle.style.borderRadius = "5px";
       noteToggle.style.outlineStyle = "solid";
@@ -870,13 +938,27 @@ async function getNotes(requestID) {
       noteToggle.style.color = "#63fbf0";
       noteToggle.style.lineHeight = "20px"; // Ensures the text is vertically centered
       noteToggle.id = "noteToggle";
+      const noteAuthor = document.createElement("p");
+      noteAuthor.style.fontWeight = "bold";
+      noteAuthor.textContent = value.noteClient.fullName;
       const timestamp = document.createElement("p");
-      timestamp.textContent = value.noteDate;
+      timestamp.textContent = "   -   " + value.noteDate;
       const noteDiv = document.createElement("div");
       noteDiv.className = "note";
       const noteHeader = document.createElement("div");
       noteHeader.style.display = "flex";
       noteToggle.style.marginRight = "10px";
+      noteAuthor.style.margin = "0";
+      noteAuthor.style.padding = "0";
+      noteAuthor.style.color = "#333";
+      noteAuthor.style.fontSize = "14px";
+      noteAuthor.style.lineHeight = "20px";
+      noteAuthor.style.display = "flex";
+      noteAuthor.style.alignItems = "center";
+      noteAuthor.style.justifyContent = "center";
+      noteAuthor.style.textAlign = "center";
+      marginRight = "10px";
+
       timestamp.style.margin = "0";
       timestamp.style.padding = "0";
       timestamp.style.color = "#333";
@@ -889,9 +971,10 @@ async function getNotes(requestID) {
       noteCell.appendChild(noteHeader);
 
       noteHeader.appendChild(noteToggle);
+      noteHeader.appendChild(noteAuthor);
       noteHeader.appendChild(timestamp);
       noteCell.appendChild(noteDiv);
-      noteDiv.innerHTML += "<br>" + value.description;
+      noteDiv.innerHTML += value.notetext;
       noteDiv.style.display = "none";
       noteDiv.style.backgroundColor = "#f0f0f0";
       noteDiv.style.padding = "10px";
