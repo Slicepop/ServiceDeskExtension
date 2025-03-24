@@ -678,7 +678,6 @@ function replaceLinks() {
       openContainer.style.width = "20px";
       openContainer.style.height = "20px";
       openContainer.style.cursor = "pointer";
-      openContainer.style.marginLeft = "10px";
       openContainer.style.marginRight = "10px";
       openContainer.style.float = "right";
       if (darkReaderActive) {
@@ -776,7 +775,7 @@ function replaceLinks() {
           descriptionDivHeader.style.display = "flex";
           descriptionDivHeader.style.alignItems = "center";
           descriptionDivHeader.style.padding = "0 10px";
-          descriptionDivHeader.textContent = pTag.textContent;
+          descriptionDivHeader.innerHTML = `<a href="https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=${pTag.textContent.trim()}" target="_blank">${pTag.textContent.trim()}</a>`;
 
           // Set some basic styles for the descriptionDiv
           descriptionDiv.style.padding = "5px";
@@ -836,11 +835,14 @@ function replaceLinks() {
           containerDiv.style.left = `${rect.left + window.scrollX}px`;
 
           // Add a close button to the header
-          const exitButton = document.createElement("button");
-          exitButton.textContent = "X";
+          const exitButton = document.createElement("p");
+          exitButton.textContent = "❎";
+          exitButton.title = "Close";
+          exitButton.style.scale = "1.25";
+          exitButton.style.color = "red";
           exitButton.style.position = "absolute";
-          exitButton.style.top = "5px";
-          exitButton.style.right = "5px";
+          exitButton.style.top = "0px";
+          exitButton.style.right = "15px";
           exitButton.style.backgroundColor = "transparent";
           exitButton.style.color = "white";
           exitButton.style.border = "none";
