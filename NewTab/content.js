@@ -749,7 +749,6 @@ function replaceLinks() {
 
           // Add event listener to bring the clicked container to the front
           containerDiv.addEventListener("click", () => {
-            // Reset zIndex for all containers
             // Reset zIndex for all containers except the clicked one
             document
               .querySelectorAll("div[style*='position: absolute']")
@@ -776,8 +775,16 @@ function replaceLinks() {
           descriptionDivHeader.style.alignItems = "center";
           descriptionDivHeader.style.padding = "0 10px";
           descriptionDivHeader.innerHTML = `<a href="https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=${pTag.textContent.trim()}" target="_blank">${pTag.textContent.trim()}</a>`;
+          let originalPosition = {
+            top: containerDiv.style.top,
+            left: containerDiv.style.left,
+          };
           descriptionDivHeader.ondblclick = () => {
             if (containerDiv.style.position === "absolute") {
+              originalPosition = {
+                top: containerDiv.style.top,
+                left: containerDiv.style.left,
+              };
               containerDiv.style.position = "fixed";
               containerDiv.style.top = "0";
               containerDiv.style.left = "0";
@@ -793,9 +800,43 @@ function replaceLinks() {
               containerDiv.style.height = "35vh";
               containerDiv.style.resize = "both";
               containerDiv.style.overflow = "hidden";
+              containerDiv.style.borderRadius = "10px";
               containerDiv.style.zIndex = "1";
             }
           };
+
+          descriptionDivHeader.addEventListener("mousedown", (event) => {
+            event.preventDefault();
+            if (containerDiv.style.position === "fixed") {
+              // Exit fullscreen mode when dragging starts
+              containerDiv.style.position = "absolute";
+              containerDiv.style.left = event.clientX - offsetX + "px";
+              containerDiv.style.top = event.clientY - offsetY + "px";
+              containerDiv.style.width = "35vw";
+              containerDiv.style.height = "35vh";
+              containerDiv.style.resize = "both";
+              containerDiv.style.overflow = "hidden";
+              containerDiv.style.borderRadius = "10px";
+              containerDiv.style.zIndex = "1";
+            }
+
+            isDragging = true;
+            offsetX = event.clientX - containerDiv.offsetLeft;
+            offsetY = event.clientY - containerDiv.offsetTop;
+            containerDiv.style.zIndex = "1000"; // Bring the div to the front while dragging
+          });
+
+          document.addEventListener("mousemove", (event) => {
+            if (isDragging) {
+              containerDiv.style.left = event.clientX - offsetX + "px";
+              containerDiv.style.top = event.clientY - offsetY + "px";
+            }
+          });
+
+          document.addEventListener("mouseup", () => {
+            isDragging = false;
+            containerDiv.style.zIndex = "1"; // Reset z-index
+          });
           // Set some basic styles for the descriptionDiv
           descriptionDiv.style.padding = "5px";
           descriptionDiv.style.overflow = "auto";
@@ -808,8 +849,14 @@ function replaceLinks() {
           document.body.appendChild(containerDiv);
           containerDiv.style.width = "35vw";
           containerDiv.style.height = "35vh";
+
           // Add drag functionality to the header
           descriptionDivHeader.addEventListener("mousedown", (event) => {
+            if (containerDiv.style.position === "fixed") {
+              // Disallow movement while fullscreen
+
+              return;
+            }
             isDragging = true;
             offsetX = event.clientX - containerDiv.offsetLeft;
             offsetY = event.clientY - containerDiv.offsetTop;
