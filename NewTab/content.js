@@ -717,6 +717,7 @@ function replaceLinks() {
           const containerDiv = document.createElement("div");
           const descriptionDivHeader = document.createElement("div");
           const descriptionDiv = document.createElement("div");
+
           let isDragging = false;
           let offsetX, offsetY;
 
@@ -731,7 +732,7 @@ function replaceLinks() {
           incident?.addEventListener("click", removeAllContainers);
           myTasks?.addEventListener("click", removeAllContainers);
           containerDiv.style.position = "absolute";
-
+          const requestDetails = await getItemDetails(pTag.textContent.trim());
           // containerDiv.style.maxWidth = "80vw";
           // containerDiv.style.maxHeight = "80vh";
           containerDiv.style.border = "1px solid #ccc";
@@ -773,12 +774,23 @@ function replaceLinks() {
           descriptionDivHeader.style.display = "flex";
           descriptionDivHeader.style.alignItems = "center";
           descriptionDivHeader.style.padding = "0 10px";
+          const subject = document.createElement("h8");
+          subject.textContent = requestDetails.subject;
+          subject.style.margin = "0 auto";
+          subject.style.textAlign = "center";
+          subject.style.flex = "1";
+          subject.style.maxWidth = "calc(100% - 100px)"; // Adjust max width to leave space for other elements
+          subject.style.color = "#63fbf0";
+          subject.style.overflow = "hidden";
+          subject.style.textOverflow = "ellipsis";
+          subject.style.whiteSpace = "nowrap";
           const linkToRequest = document.createElement("a");
           linkToRequest.id = "linkToRequest";
           linkToRequest.href = `https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=${pTag.textContent.trim()}`;
           linkToRequest.textContent = pTag.textContent.trim();
           linkToRequest.target = "_blank";
           descriptionDivHeader.appendChild(linkToRequest);
+          descriptionDivHeader.appendChild(subject);
           let originalPosition = {
             top: containerDiv.style.top,
             left: containerDiv.style.left,
@@ -837,20 +849,6 @@ function replaceLinks() {
               let newLeft = event.clientX - offsetX;
               let newTop = event.clientY - offsetY;
 
-              // Prevent the container from going off-screen
-              const containerRect = containerDiv.getBoundingClientRect();
-              const viewportWidth = window.innerWidth;
-              const viewportHeight = window.innerHeight;
-
-              if (newLeft < 0) newLeft = 0;
-              if (newTop < 0) newTop = 0;
-              if (newLeft + containerRect.width > viewportWidth) {
-                newLeft = viewportWidth - containerRect.width;
-              }
-              if (newTop + containerRect.height > viewportHeight) {
-                newTop = viewportHeight - containerRect.height;
-              }
-
               containerDiv.style.left = newLeft + "px";
               containerDiv.style.top = newTop + "px";
             }
@@ -891,20 +889,6 @@ function replaceLinks() {
               let newLeft = event.clientX - offsetX;
               let newTop = event.clientY - offsetY;
 
-              // Prevent the container from going off-screen
-              const containerRect = containerDiv.getBoundingClientRect();
-              const viewportWidth = window.innerWidth;
-              const viewportHeight = window.innerHeight;
-
-              if (newLeft < 0) newLeft = 0;
-              if (newTop < 0) newTop = 0;
-              if (newLeft + containerRect.width > viewportWidth) {
-                newLeft = viewportWidth - containerRect.width;
-              }
-              if (newTop + containerRect.height > viewportHeight) {
-                newTop = viewportHeight - containerRect.height;
-              }
-
               containerDiv.style.left = newLeft + "px";
               containerDiv.style.top = newTop + "px";
             }
@@ -917,8 +901,8 @@ function replaceLinks() {
 
           // Add content to the descriptionDiv
           descriptionDiv.appendChild(await getNotes(pTag.textContent.trim()));
-          descriptionDiv.innerHTML +=
-            "<hr>" + (await getItemDescription(pTag.textContent.trim()));
+
+          descriptionDiv.innerHTML += "<hr>" + requestDetails.description;
 
           // Add toggle functionality for notes
           const noteToggles = descriptionDiv.querySelectorAll("#noteToggle");
@@ -996,9 +980,7 @@ function replaceLinks() {
     }
   });
 }
-async function getItemDescription(itemID) {
-  let description = "";
-
+async function getItemDetails(itemID) {
   try {
     const response = await fetch(
       "https://support.wmed.edu/LiveTime/services/v1/user/requests/" +
@@ -1034,8 +1016,7 @@ async function getItemDescription(itemID) {
     }
 
     const data = await response.json();
-    description = data.description || "No description available";
-    return description;
+    return data;
   } catch (error) {
     location.reload();
   }
