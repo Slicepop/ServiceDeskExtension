@@ -732,8 +732,8 @@ function replaceLinks() {
           myTasks?.addEventListener("click", removeAllContainers);
           containerDiv.style.position = "absolute";
 
-          containerDiv.style.maxWidth = "80vw";
-          containerDiv.style.maxHeight = "80vh";
+          // containerDiv.style.maxWidth = "80vw";
+          // containerDiv.style.maxHeight = "80vh";
           containerDiv.style.border = "1px solid #ccc";
           containerDiv.style.borderRadius = "10px";
           containerDiv.style.boxShadow = "0px 4px 8px rgba(0, 0, 0, 0.41)";
@@ -768,7 +768,7 @@ function replaceLinks() {
           descriptionDivHeader.style.top = "0";
           descriptionDivHeader.style.left = "0";
           descriptionDivHeader.style.right = "0";
-          descriptionDivHeader.style.cursor = "move";
+          descriptionDivHeader.style.cursor = "default";
           descriptionDivHeader.style.height = "30px";
           descriptionDivHeader.style.backgroundColor = "gray";
           descriptionDivHeader.style.color = "white";
@@ -776,7 +776,26 @@ function replaceLinks() {
           descriptionDivHeader.style.alignItems = "center";
           descriptionDivHeader.style.padding = "0 10px";
           descriptionDivHeader.innerHTML = `<a href="https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=${pTag.textContent.trim()}" target="_blank">${pTag.textContent.trim()}</a>`;
-
+          descriptionDivHeader.ondblclick = () => {
+            if (containerDiv.style.position === "absolute") {
+              containerDiv.style.position = "fixed";
+              containerDiv.style.top = "0";
+              containerDiv.style.left = "0";
+              containerDiv.style.width = "100vw";
+              containerDiv.style.height = "100vh";
+              containerDiv.style.zIndex = "1000";
+              containerDiv.style.resize = "none";
+              containerDiv.style.overflow = "auto";
+              containerDiv.style.borderRadius = "0";
+            } else {
+              containerDiv.style.position = "absolute";
+              containerDiv.style.width = "35vw";
+              containerDiv.style.height = "35vh";
+              containerDiv.style.resize = "both";
+              containerDiv.style.overflow = "hidden";
+              containerDiv.style.zIndex = "1";
+            }
+          };
           // Set some basic styles for the descriptionDiv
           descriptionDiv.style.padding = "5px";
           descriptionDiv.style.overflow = "auto";
