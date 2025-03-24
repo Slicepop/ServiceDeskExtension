@@ -11,7 +11,7 @@
     "css": ["./styles.css"]
   },
 
-  "host_permissions": ["https://*.wmed.edu/*"],
+  "host_permissions": ["https://support.wmed.edu/*"],
   "web_accessible_resources": [
     {
       "resources": [

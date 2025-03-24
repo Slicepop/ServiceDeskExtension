@@ -674,6 +674,7 @@ function replaceLinks() {
       const pTag = document.createElement("p");
       const openContainer = document.createElement("img");
       openContainer.src = chrome.runtime.getURL("./open.png");
+      openContainer.title = "Open Request Preview";
       openContainer.style.width = "20px";
       openContainer.style.height = "20px";
       openContainer.style.cursor = "pointer";
@@ -732,8 +733,6 @@ function replaceLinks() {
           myTasks?.addEventListener("click", removeAllContainers);
           containerDiv.style.position = "absolute";
 
-          containerDiv.style.Width = "30vw";
-          containerDiv.style.Height = "30vh";
           containerDiv.style.maxWidth = "80vw";
           containerDiv.style.maxHeight = "80vh";
           containerDiv.style.border = "1px solid #ccc";
@@ -744,6 +743,25 @@ function replaceLinks() {
           containerDiv.style.pointerEvents = "all";
           containerDiv.style.resize = "both"; // Allow resizing both horizontally and vertically
           containerDiv.style.overflow = "auto"; // Ensure content is scrollable when resized
+          containerDiv.style.outlineStyle = "solid";
+          containerDiv.style.outlineWidth = ".25px";
+          containerDiv.style.outlineColor = "#63fbf0";
+          containerDiv.style.zIndex = "1";
+
+          // Add event listener to bring the clicked container to the front
+          containerDiv.addEventListener("click", () => {
+            // Reset zIndex for all containers
+            // Reset zIndex for all containers except the clicked one
+            document
+              .querySelectorAll("div[style*='position: absolute']")
+              .forEach((div) => {
+                if (div !== containerDiv) {
+                  div.style.zIndex = "1";
+                }
+              });
+            // Bring the clicked container to the front
+            containerDiv.style.zIndex = "1000";
+          });
 
           // Set some basic styles for the descriptionDivHeader
           descriptionDivHeader.id = "descriptionDivHeader";
@@ -768,10 +786,10 @@ function replaceLinks() {
           // Append the header and descriptionDiv to the containerDiv
           containerDiv.appendChild(descriptionDivHeader);
           containerDiv.appendChild(descriptionDiv);
-
           // Append the containerDiv to the body
           document.body.appendChild(containerDiv);
-
+          containerDiv.style.width = "35vw";
+          containerDiv.style.height = "35vh";
           // Add drag functionality to the header
           descriptionDivHeader.addEventListener("mousedown", (event) => {
             isDragging = true;
