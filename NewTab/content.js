@@ -738,7 +738,6 @@ function replaceLinks() {
           containerDiv.style.borderRadius = "10px";
           containerDiv.style.boxShadow = "0px 4px 8px rgba(0, 0, 0, 0.41)";
           containerDiv.style.backgroundColor = "#ffff";
-          containerDiv.style.overflow = "hidden";
           containerDiv.style.pointerEvents = "all";
           containerDiv.style.resize = "both"; // Allow resizing both horizontally and vertically
           containerDiv.style.overflow = "auto"; // Ensure content is scrollable when resized
@@ -774,7 +773,10 @@ function replaceLinks() {
           descriptionDivHeader.style.display = "flex";
           descriptionDivHeader.style.alignItems = "center";
           descriptionDivHeader.style.padding = "0 10px";
-          descriptionDivHeader.innerHTML = `<a href="https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=${pTag.textContent.trim()}" target="_blank">${pTag.textContent.trim()}</a>`;
+          const linkToRequest = document.createElement("a");
+          linkToRequest.href = `https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=${pTag.textContent.trim()}`;
+          linkToRequest.textContent = pTag.textContent.trim();
+          descriptionDivHeader.appendChild(linkToRequest);
           let originalPosition = {
             top: containerDiv.style.top,
             left: containerDiv.style.left,
@@ -799,7 +801,6 @@ function replaceLinks() {
               containerDiv.style.width = "35vw";
               containerDiv.style.height = "35vh";
               containerDiv.style.resize = "both";
-              containerDiv.style.overflow = "hidden";
               containerDiv.style.borderRadius = "10px";
               containerDiv.style.zIndex = "1";
             }
@@ -807,7 +808,11 @@ function replaceLinks() {
 
           descriptionDivHeader.addEventListener("mousedown", (event) => {
             event.preventDefault();
-            if (containerDiv.style.position === "fixed") {
+            if (
+              containerDiv.style.position === "fixed" &&
+              event.target != exitButton &&
+              event.target != linkToRequest
+            ) {
               // Exit fullscreen mode when dragging starts
               containerDiv.style.position = "absolute";
               containerDiv.style.left = event.clientX - offsetX + "px";
@@ -815,7 +820,6 @@ function replaceLinks() {
               containerDiv.style.width = "35vw";
               containerDiv.style.height = "35vh";
               containerDiv.style.resize = "both";
-              containerDiv.style.overflow = "hidden";
               containerDiv.style.borderRadius = "10px";
               containerDiv.style.zIndex = "1";
             }
@@ -828,8 +832,25 @@ function replaceLinks() {
 
           document.addEventListener("mousemove", (event) => {
             if (isDragging) {
-              containerDiv.style.left = event.clientX - offsetX + "px";
-              containerDiv.style.top = event.clientY - offsetY + "px";
+              let newLeft = event.clientX - offsetX;
+              let newTop = event.clientY - offsetY;
+
+              // Prevent the container from going off-screen
+              const containerRect = containerDiv.getBoundingClientRect();
+              const viewportWidth = window.innerWidth;
+              const viewportHeight = window.innerHeight;
+
+              if (newLeft < 0) newLeft = 0;
+              if (newTop < 0) newTop = 0;
+              if (newLeft + containerRect.width > viewportWidth) {
+                newLeft = viewportWidth - containerRect.width;
+              }
+              if (newTop + containerRect.height > viewportHeight) {
+                newTop = viewportHeight - containerRect.height;
+              }
+
+              containerDiv.style.left = newLeft + "px";
+              containerDiv.style.top = newTop + "px";
             }
           });
 
@@ -865,8 +886,25 @@ function replaceLinks() {
 
           document.addEventListener("mousemove", (event) => {
             if (isDragging) {
-              containerDiv.style.left = event.clientX - offsetX + "px";
-              containerDiv.style.top = event.clientY - offsetY + "px";
+              let newLeft = event.clientX - offsetX;
+              let newTop = event.clientY - offsetY;
+
+              // Prevent the container from going off-screen
+              const containerRect = containerDiv.getBoundingClientRect();
+              const viewportWidth = window.innerWidth;
+              const viewportHeight = window.innerHeight;
+
+              if (newLeft < 0) newLeft = 0;
+              if (newTop < 0) newTop = 0;
+              if (newLeft + containerRect.width > viewportWidth) {
+                newLeft = viewportWidth - containerRect.width;
+              }
+              if (newTop + containerRect.height > viewportHeight) {
+                newTop = viewportHeight - containerRect.height;
+              }
+
+              containerDiv.style.left = newLeft + "px";
+              containerDiv.style.top = newTop + "px";
             }
           });
 
@@ -918,7 +956,7 @@ function replaceLinks() {
           exitButton.style.cursor = "pointer";
           descriptionDivHeader.appendChild(exitButton);
 
-          exitButton.onclick = function () {
+          exitButton.onclick = function (event) {
             containerDiv.remove();
           };
         }, 1);
