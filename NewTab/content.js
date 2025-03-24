@@ -707,9 +707,9 @@ function replaceLinks() {
         // Show description after 3 seconds
         const hoverTimeout = setTimeout(async () => {
           if (
-            Array.from(
-              document.querySelectorAll("div[style*='position: absolute']")
-            ).some((div) => div.textContent.includes(pTag.textContent))
+            Array.from(document.querySelectorAll("#linkToRequest")).some(
+              (div) => div.textContent.includes(pTag.textContent.trim())
+            )
           ) {
             return;
           }
@@ -774,8 +774,10 @@ function replaceLinks() {
           descriptionDivHeader.style.alignItems = "center";
           descriptionDivHeader.style.padding = "0 10px";
           const linkToRequest = document.createElement("a");
+          linkToRequest.id = "linkToRequest";
           linkToRequest.href = `https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=${pTag.textContent.trim()}`;
           linkToRequest.textContent = pTag.textContent.trim();
+          linkToRequest.target = "_blank";
           descriptionDivHeader.appendChild(linkToRequest);
           let originalPosition = {
             top: containerDiv.style.top,
@@ -802,7 +804,7 @@ function replaceLinks() {
               containerDiv.style.height = "35vh";
               containerDiv.style.resize = "both";
               containerDiv.style.borderRadius = "10px";
-              containerDiv.style.zIndex = "1";
+              containerDiv.style.zIndex = "3";
             }
           };
 
@@ -940,7 +942,7 @@ function replaceLinks() {
 
           // Add a close button to the header
           const exitButton = document.createElement("p");
-          exitButton.textContent = "❎";
+          exitButton.textContent = "❌";
           exitButton.title = "Close";
           exitButton.style.scale = "1.25";
           exitButton.style.color = "red";
