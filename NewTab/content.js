@@ -1107,6 +1107,7 @@ async function getNotes(requestID) {
       const noteAuthor = document.createElement("p");
       noteAuthor.style.fontWeight = "bold";
       noteAuthor.textContent = value.noteClient.fullName;
+
       const timestamp = document.createElement("p");
       timestamp.textContent = "   -   " + value.noteDate;
       const noteDiv = document.createElement("div");
@@ -1137,6 +1138,23 @@ async function getNotes(requestID) {
 
       noteHeader.appendChild(noteToggle);
       noteHeader.appendChild(noteAuthor);
+      if (value.isDraft == true) {
+        const draftIndicator = document.createElement("p");
+        draftIndicator.textContent = "DRAFT";
+        draftIndicator.style.color = "red";
+        draftIndicator.style.fontWeight = "bold";
+        draftIndicator.style.margin = "0";
+        draftIndicator.style.padding = "0";
+        draftIndicator.style.fontSize = "14px";
+        draftIndicator.style.lineHeight = "20px";
+        draftIndicator.style.display = "flex";
+        draftIndicator.style.alignItems = "center";
+        draftIndicator.style.justifyContent = "center";
+        draftIndicator.style.textAlign = "center";
+        draftIndicator.style.marginLeft = "10px";
+        draftIndicator.style.marginBottom = "-2px";
+        noteAuthor.appendChild(draftIndicator);
+      }
       noteHeader.appendChild(timestamp);
       noteCell.appendChild(noteDiv);
       noteDiv.innerHTML += value.notetext;
