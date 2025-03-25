@@ -672,19 +672,32 @@ function replaceLinks() {
         }
       });
       const pTag = document.createElement("p");
-      const openContainer = document.createElement("img");
-      openContainer.src = chrome.runtime.getURL("./open.png");
+      var openContainer = document.createElement("img");
+      try {
+        openContainer.src = chrome.runtime.getURL("./open.png");
+        if (darkReaderActive) {
+          openContainer.style.filter = "invert(1)";
+        } else {
+          openContainer.style.filter = "none";
+        }
+      } catch (error) {
+        openContainer = document.createElement("p");
+        openContainer.textContent = "↗";
+        openContainer.style.color = darkReaderActive ? "white" : "black";
+        openContainer.style.fontSize = "25px";
+        openContainer.style.display = "inline-block";
+        openContainer.style.textAlign = "center";
+        openContainer.style.lineHeight = "20px";
+        openContainer.style.border = "none";
+        console.error("Error loading image");
+      }
       openContainer.title = "Open Request Preview";
       openContainer.style.width = "20px";
       openContainer.style.height = "20px";
       openContainer.style.cursor = "pointer";
       openContainer.style.marginRight = "10px";
       openContainer.style.float = "right";
-      if (darkReaderActive) {
-        openContainer.style.filter = "invert(1)";
-      } else {
-        openContainer.style.filter = "none";
-      }
+
       pTag.textContent = link.textContent;
       pTag.style.color = "#07ada1";
       pTag.id = "requestId";
@@ -910,10 +923,12 @@ function replaceLinks() {
             toggle.onclick = function () {
               const noteDiv = toggle.parentElement.nextElementSibling;
               if (noteDiv.style.display === "none") {
-                toggle.textContent = "∧";
+                toggle.innerHTML =
+                  '<span style="color: #63fbf0;">▲</span><span style="color: grey;">  |</span>';
                 noteDiv.style.display = "block";
               } else {
-                toggle.textContent = "∨";
+                toggle.innerHTML =
+                  '<span style="color: #63fbf0;">▼</span><span style="color: grey;">  |</span>';
                 noteDiv.style.display = "none";
               }
             };
@@ -975,7 +990,9 @@ function replaceLinks() {
 
       link.parentNode.replaceChild(pTag, link);
 
-      pTag.parentElement.appendChild(openContainer);
+      if (pTag.parentElement) {
+        pTag.parentElement.appendChild(openContainer);
+      }
       link.dataset.processed = "true";
     }
   });
@@ -1069,15 +1086,16 @@ async function getNotes(requestID) {
     if (value.notetext) {
       const noteCell = document.createElement("div");
       const noteToggle = document.createElement("p");
-      noteToggle.textContent = "∨";
+      noteToggle.innerHTML =
+        '<span style="color: #63fbf0;">▼</span><span style="color: grey;">  |</span>';
       noteToggle.style.userSelect = "none";
+      noteToggle.style.marginBottom = "12px";
       noteToggle.style.cursor = "pointer";
       noteToggle.style.borderRadius = "5px";
-      noteToggle.style.outlineStyle = "solid";
-      noteToggle.style.outlineWidth = ".25px";
       noteToggle.style.marginTop = "10px";
+      noteToggle.style.fontSize = "20px";
       noteToggle.style.padding = "0";
-      noteToggle.style.width = "20px";
+      noteToggle.style.width = "35px";
       noteToggle.style.height = "20px";
       noteToggle.style.display = "flex";
       noteToggle.style.alignItems = "center";
@@ -1095,7 +1113,7 @@ async function getNotes(requestID) {
       noteDiv.className = "note";
       const noteHeader = document.createElement("div");
       noteHeader.style.display = "flex";
-      noteToggle.style.marginRight = "10px";
+      noteToggle.style.marginRight = "5px";
       noteAuthor.style.margin = "0";
       noteAuthor.style.padding = "0";
       noteAuthor.style.color = "#333";
@@ -1105,7 +1123,6 @@ async function getNotes(requestID) {
       noteAuthor.style.alignItems = "center";
       noteAuthor.style.justifyContent = "center";
       noteAuthor.style.textAlign = "center";
-      marginRight = "10px";
 
       timestamp.style.margin = "0";
       timestamp.style.padding = "0";
@@ -1163,34 +1180,7 @@ function removeUnusedKeys() {
       }
     }
   }
-
-  //   if (incident.className != "selectedtab") {
-  //     if (search) {
-  //       if (search.value == "") {
-  //         const storedKeys = Object.keys(localStorage);
-  //         storedKeys.forEach((key) => {
-  //           safe = false;
-  //           const value = localStorage.getItem(key);
-  //           if (value && value.startsWith('{"note')) {
-  //             requestIdArray.forEach((request) => {
-  //               if (key != request) {
-  //                 safe = true;
-  //               }
-  //             });
-  //           }
-  //           if (safe == false) {
-  //             console.log(key);
-  //           }
-  //         });
-  //       }
-  //     }
-  //   }
 }
-/**
- * Removes the confirmation message by clicking the dismiss button on a modal.
- * If the success message is currently displayed, it waits for 300 milliseconds
- * before triggering the click event on the modal's dismiss button.
- */
 const successMSG = document.querySelector("#request_success_msg");
 function removeConfirmation() {
   if (successMSG.style.display == "block") {
