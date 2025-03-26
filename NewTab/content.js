@@ -6,10 +6,10 @@
  * The "Save and Close" button will close the window after a delay when clicked.
  */
 const incident = document.querySelector(
-  "#rightpanel > zsd-user-requestlist > div.row.rowoverride > div.mb-3.col-10 > ul > li:nth-child(2) > span"
+  "#rightpanel > zsd-user-requestlist > div.row.rowoverride > div.mb-3.col-10 > ul > li:nth-child(2)"
 );
 
-if (incident) {
+if (incident && incident.querySelector("sup").textContent != "0") {
   setTimeout(() => {
     incident.click();
   }, 1);
@@ -834,6 +834,7 @@ function replaceLinks() {
               containerDiv.style.resize = "none";
               containerDiv.style.overflow = "auto";
               containerDiv.style.borderRadius = "0";
+              document.querySelector("html").style.overflow = "hidden";
             } else {
               containerDiv.style.position = "absolute";
               containerDiv.style.width = "35vw";
@@ -860,6 +861,7 @@ function replaceLinks() {
               containerDiv.style.resize = "both";
               containerDiv.style.borderRadius = "10px";
               containerDiv.style.zIndex = "1";
+              document.querySelector("html").style.overflow = "auto";
             }
 
             isDragging = true;
@@ -970,6 +972,7 @@ function replaceLinks() {
 
           exitButton.onclick = function (event) {
             containerDiv.remove();
+            document.querySelector("html").style.overflow = "auto";
           };
         }, 1);
 
