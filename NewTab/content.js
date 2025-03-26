@@ -31,9 +31,7 @@ window.onfocus = function () {
       if (incident.className == "selectedtab") {
         incident.click();
       } else {
-        if (myTasks) {
-          myTasks.click();
-        }
+        myTasks && myTasks.click();
       }
     }
   }
@@ -660,7 +658,7 @@ function replaceLinks() {
 
             const container = document.querySelector(
               "body > div.toolbar_wrapper > ul"
-            ); // Replace with actual container element
+            );
             if (container && !document.querySelector("#export")) {
               container.appendChild(importButton);
               container.appendChild(exportButton);
@@ -865,7 +863,6 @@ function replaceLinks() {
               containerDiv.style.height = "35vh";
               containerDiv.style.resize = "both";
               containerDiv.style.borderRadius = "10px";
-              containerDiv.style.zIndex = "1";
               document.querySelector("html").style.overflow = "auto";
             }
             console.log("asd");
@@ -908,6 +905,7 @@ function replaceLinks() {
                     containerDiv.offsetWidth;
                   break;
               }
+              containerDiv.style.zIndex = "1000";
 
               containerDiv.style.left = newLeft + "px";
               containerDiv.style.top = newTop + "px";
