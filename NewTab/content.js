@@ -868,6 +868,7 @@ function replaceLinks() {
               containerDiv.style.zIndex = "1";
               document.querySelector("html").style.overflow = "auto";
             }
+            console.log("asd");
 
             isDragging = true;
             offsetX = event.clientX - containerDiv.offsetLeft;
@@ -879,6 +880,34 @@ function replaceLinks() {
             if (isDragging) {
               let newLeft = event.clientX - offsetX;
               let newTop = event.clientY - offsetY;
+              // Prevent dragging over the top of the screen
+              switch (true) {
+                case newTop < 0 && newLeft < 0:
+                  newTop = 0;
+                  newLeft = 0;
+                  break;
+                case newTop < 0 &&
+                  newLeft >
+                    document.documentElement.clientWidth -
+                      containerDiv.offsetWidth:
+                  newTop = 0;
+                  newLeft =
+                    document.documentElement.clientWidth -
+                    containerDiv.offsetWidth;
+                case newTop < 0:
+                  newTop = 0;
+                  break;
+                case newLeft < 0:
+                  newLeft = 0;
+                  break;
+                case newLeft >
+                  document.documentElement.clientWidth -
+                    containerDiv.offsetWidth:
+                  newLeft =
+                    document.documentElement.clientWidth -
+                    containerDiv.offsetWidth;
+                  break;
+              }
 
               containerDiv.style.left = newLeft + "px";
               containerDiv.style.top = newTop + "px";
@@ -903,32 +932,6 @@ function replaceLinks() {
           containerDiv.style.height = "35vh";
 
           // Add drag functionality to the header
-          descriptionDivHeader.addEventListener("mousedown", (event) => {
-            if (containerDiv.style.position === "fixed") {
-              // Disallow movement while fullscreen
-
-              return;
-            }
-            isDragging = true;
-            offsetX = event.clientX - containerDiv.offsetLeft;
-            offsetY = event.clientY - containerDiv.offsetTop;
-            containerDiv.style.zIndex = "1000"; // Bring the div to the front while dragging
-          });
-
-          document.addEventListener("mousemove", (event) => {
-            if (isDragging) {
-              let newLeft = event.clientX - offsetX;
-              let newTop = event.clientY - offsetY;
-
-              containerDiv.style.left = newLeft + "px";
-              containerDiv.style.top = newTop + "px";
-            }
-          });
-
-          document.addEventListener("mouseup", () => {
-            isDragging = false;
-            containerDiv.style.zIndex = "1"; // Reset z-index
-          });
 
           // Add content to the descriptionDiv
           descriptionDiv.appendChild(await getNotes(pTag.textContent.trim()));
