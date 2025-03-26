@@ -8,10 +8,14 @@
 const incident = document.querySelector(
   "#rightpanel > zsd-user-requestlist > div.row.rowoverride > div.mb-3.col-10 > ul > li:nth-child(2)"
 );
-
-if (incident && incident.querySelector("sup").textContent != "0") {
+const incidentNum = document.querySelector(
+  "#rightpanel > zsd-user-requestlist > div.row.rowoverride > div.mb-3.col-10 > ul > li:nth-child(2) > sup"
+);
+if (incident) {
   setTimeout(() => {
-    incident.click();
+    if (incidentNum && incidentNum.textContent != "0") {
+      incident.click();
+    }
   }, 1);
 }
 var darkReaderActive =
