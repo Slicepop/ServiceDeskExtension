@@ -6,7 +6,7 @@
  * The "Save and Close" button will close the window after a delay when clicked.
  */
 const incident = document.querySelector(
-  "#rightpanel > zsd-user-requestlist > div.row.rowoverride > div.mb-3.col-10 > ul > li:nth-child(2)"
+  "#rightpanel > zsd-user-requestlist > div.row.rowoverride > div.mb-3.col-10 > ul > li:nth-child(2) > span"
 );
 const incidentNum = document.querySelector(
   "#rightpanel > zsd-user-requestlist > div.row.rowoverride > div.mb-3.col-10 > ul > li:nth-child(2) > sup"
