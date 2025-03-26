@@ -38,11 +38,12 @@ window.onfocus = function () {
     }
   }
 };
-
+const subitem = document.querySelector("#submenu");
 const navs = document.querySelectorAll("nav");
 if (navs) {
   navs.forEach((nav) => {
     nav.style.zIndex = "1";
+    subitem && (subitem.style.zIndex = "1");
   });
 }
 const footer = document.querySelector("body > div.toolbar_wrapper");
