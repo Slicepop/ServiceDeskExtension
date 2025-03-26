@@ -34,6 +34,17 @@ window.onfocus = function () {
     }
   }
 };
+
+const navs = document.querySelectorAll("nav");
+if (navs) {
+  navs.forEach((nav) => {
+    nav.style.zIndex = "1";
+  });
+}
+const footer = document.querySelector("body > div.toolbar_wrapper");
+if (footer) {
+  footer.style.zIndex = "1";
+}
 const requestButton = document.querySelector(
   "#zsd_navbar_menus > ul.navbar-nav.mr-auto > li:nth-child(2) > a"
 );
