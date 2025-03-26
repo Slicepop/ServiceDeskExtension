@@ -1109,7 +1109,18 @@ async function getNotes(requestID) {
       noteAuthor.textContent = value.noteClient.fullName;
 
       const timestamp = document.createElement("p");
-      timestamp.textContent = "   -   " + value.noteDate;
+
+      const formattedDate = new Date(value.noteDate);
+      const options = {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      };
+      timestamp.textContent =
+        "   -   " + formattedDate.toLocaleDateString("en-US", options);
+
       const noteDiv = document.createElement("div");
       noteDiv.className = "note";
       const noteHeader = document.createElement("div");
@@ -1134,6 +1145,7 @@ async function getNotes(requestID) {
       timestamp.style.alignItems = "center";
       timestamp.style.justifyContent = "center";
       timestamp.style.textAlign = "center";
+
       noteCell.appendChild(noteHeader);
 
       noteHeader.appendChild(noteToggle);
