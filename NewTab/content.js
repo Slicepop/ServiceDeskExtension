@@ -742,33 +742,21 @@ function replaceLinks() {
           }
 
           const containerDiv = document.createElement("div");
-          const descriptionDivHeader = document.createElement("div");
-          const descriptionDiv = document.createElement("div");
+          const headerContainer = document.createElement("div");
+          const contentContainer = document.createElement("div");
 
           let isDragging = false;
           let offsetX, offsetY;
 
-          // Set some basic styles for the containerDiv
-          const removeAllContainers = () => {
-            const openContainers = document.querySelectorAll(
-              "div[style*='position: absolute']"
-            );
-            openContainers.forEach((container) => container.remove());
-          };
-
-          incident?.addEventListener("click", removeAllContainers);
-          myTasks?.addEventListener("click", removeAllContainers);
+          // Set styles for the main container
           containerDiv.style.position = "absolute";
-          const requestDetails = await getItemDetails(pTag.textContent.trim());
-          // containerDiv.style.maxWidth = "80vw";
-          // containerDiv.style.maxHeight = "80vh";
           containerDiv.style.border = "1px solid #ccc";
           containerDiv.style.borderRadius = "10px";
           containerDiv.style.boxShadow = "0px 4px 8px rgba(0, 0, 0, 0.41)";
           containerDiv.style.backgroundColor = "#ffff";
           containerDiv.style.pointerEvents = "all";
-          containerDiv.style.resize = "both"; // Allow resizing both horizontally and vertically
-          containerDiv.style.overflow = "auto"; // Ensure content is scrollable when resized
+          containerDiv.style.resize = "both";
+          containerDiv.style.overflow = "hidden"; // Ensure content doesn't overflow
           containerDiv.style.outlineStyle = "solid";
           containerDiv.style.outlineWidth = ".25px";
           containerDiv.style.outlineColor = "#63fbf0";
@@ -776,7 +764,6 @@ function replaceLinks() {
 
           // Add event listener to bring the clicked container to the front
           containerDiv.addEventListener("click", () => {
-            // Reset zIndex for all containers except the clicked one
             document
               .querySelectorAll("div[style*='position: absolute']")
               .forEach((div) => {
@@ -784,45 +771,51 @@ function replaceLinks() {
                   div.style.zIndex = "1";
                 }
               });
-            // Bring the clicked container to the front
             containerDiv.style.zIndex = "1000";
           });
 
-          // Set some basic styles for the descriptionDivHeader
-          descriptionDivHeader.id = "descriptionDivHeader";
-          descriptionDivHeader.style.position = "sticky";
-          descriptionDivHeader.style.top = "0";
-          descriptionDivHeader.style.left = "0";
-          descriptionDivHeader.style.right = "0";
-          descriptionDivHeader.style.cursor = "default";
-          descriptionDivHeader.style.height = "30px";
-          descriptionDivHeader.style.backgroundColor = "gray";
-          descriptionDivHeader.style.color = "white";
-          descriptionDivHeader.style.display = "flex";
-          descriptionDivHeader.style.alignItems = "center";
-          descriptionDivHeader.style.padding = "0 10px";
+          // Set styles for the header container
+          headerContainer.style.position = "sticky";
+          headerContainer.style.top = "0";
+          headerContainer.style.left = "0";
+          headerContainer.style.right = "0";
+          headerContainer.style.cursor = "default";
+          headerContainer.style.height = "30px";
+          headerContainer.style.backgroundColor = "gray";
+          headerContainer.style.color = "white";
+          headerContainer.style.display = "flex";
+          headerContainer.style.alignItems = "center";
+          headerContainer.style.padding = "0 10px";
+          headerContainer.style.zIndex = "2";
+
+          const requestDetails = await getItemDetails(pTag.textContent.trim());
           const subject = document.createElement("h8");
           subject.textContent = requestDetails.subject;
-          subject.style.margin = "0 auto";
-          subject.style.textAlign = "center";
           subject.style.flex = "1";
-          subject.style.maxWidth = "calc(100% - 100px)"; // Adjust max width to leave space for other elements
+          subject.style.maxWidth = "calc(100% - 100px)";
           subject.style.color = "#63fbf0";
           subject.style.overflow = "hidden";
           subject.style.textOverflow = "ellipsis";
           subject.style.whiteSpace = "nowrap";
+          subject.style.textAlign = "center";
+          subject.style.display = "flex";
+          subject.style.alignItems = "center";
+          subject.style.justifyContent = "center";
+
           const linkToRequest = document.createElement("a");
           linkToRequest.id = "linkToRequest";
           linkToRequest.href = `https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=${pTag.textContent.trim()}`;
           linkToRequest.textContent = pTag.textContent.trim();
           linkToRequest.target = "_blank";
-          descriptionDivHeader.appendChild(linkToRequest);
-          descriptionDivHeader.appendChild(subject);
+          headerContainer.appendChild(linkToRequest);
+          headerContainer.appendChild(subject);
+
           let originalPosition = {
             top: containerDiv.style.top,
             left: containerDiv.style.left,
           };
-          descriptionDivHeader.ondblclick = () => {
+
+          headerContainer.ondblclick = () => {
             if (containerDiv.style.position === "absolute") {
               originalPosition = {
                 top: containerDiv.style.top,
@@ -848,14 +841,13 @@ function replaceLinks() {
             }
           };
 
-          descriptionDivHeader.addEventListener("mousedown", (event) => {
+          headerContainer.addEventListener("mousedown", (event) => {
             event.preventDefault();
             if (
               containerDiv.style.position === "fixed" &&
               event.target != exitButton &&
               event.target != linkToRequest
             ) {
-              // Exit fullscreen mode when dragging starts
               containerDiv.style.position = "absolute";
               containerDiv.style.left = event.clientX - offsetX + "px";
               containerDiv.style.top = event.clientY - offsetY + "px";
@@ -865,19 +857,18 @@ function replaceLinks() {
               containerDiv.style.borderRadius = "10px";
               document.querySelector("html").style.overflow = "auto";
             }
-            console.log("asd");
 
             isDragging = true;
             offsetX = event.clientX - containerDiv.offsetLeft;
             offsetY = event.clientY - containerDiv.offsetTop;
-            containerDiv.style.zIndex = "1000"; // Bring the div to the front while dragging
+            containerDiv.style.zIndex = "1000";
           });
 
           document.addEventListener("mousemove", (event) => {
             if (isDragging) {
               let newLeft = event.clientX - offsetX;
               let newTop = event.clientY - offsetY;
-              // Prevent dragging over the top of the screen
+
               switch (true) {
                 case newTop < 0 && newLeft < 0:
                   newTop = 0;
@@ -914,30 +905,31 @@ function replaceLinks() {
 
           document.addEventListener("mouseup", () => {
             isDragging = false;
-            containerDiv.style.zIndex = "1"; // Reset z-index
+            containerDiv.style.zIndex = "1";
           });
-          // Set some basic styles for the descriptionDiv
-          descriptionDiv.style.padding = "5px";
-          descriptionDiv.style.overflow = "auto";
-          descriptionDiv.style.whiteSpace = "pre-wrap";
 
-          // Append the header and descriptionDiv to the containerDiv
-          containerDiv.appendChild(descriptionDivHeader);
-          containerDiv.appendChild(descriptionDiv);
-          // Append the containerDiv to the body
+          // Set styles for the content container
+          contentContainer.style.padding = "5px";
+          contentContainer.style.overflow = "auto";
+          contentContainer.style.whiteSpace = "pre-wrap";
+          contentContainer.style.height = "calc(100% - 30px)"; // Adjust height to exclude header height
+          containerDiv.style.minWidth = "50px";
+          containerDiv.style.minHeight = "50px";
+          // Append the header and content containers to the main container
+          containerDiv.appendChild(headerContainer);
+          containerDiv.appendChild(contentContainer);
+
+          // Append the main container to the body
           document.body.appendChild(containerDiv);
           containerDiv.style.width = "35vw";
           containerDiv.style.height = "35vh";
 
-          // Add drag functionality to the header
-
-          // Add content to the descriptionDiv
-          descriptionDiv.appendChild(await getNotes(pTag.textContent.trim()));
-
-          descriptionDiv.innerHTML += "<hr>" + requestDetails.description;
+          // Add content to the content container
+          contentContainer.appendChild(await getNotes(pTag.textContent.trim()));
+          contentContainer.innerHTML += "<hr>" + requestDetails.description;
 
           // Add toggle functionality for notes
-          const noteToggles = descriptionDiv.querySelectorAll("#noteToggle");
+          const noteToggles = contentContainer.querySelectorAll("#noteToggle");
           noteToggles.forEach((toggle) => {
             toggle.onclick = function () {
               const noteDiv = toggle.parentElement.nextElementSibling;
@@ -974,7 +966,7 @@ function replaceLinks() {
           exitButton.style.width = "20px";
           exitButton.style.height = "20px";
           exitButton.style.cursor = "pointer";
-          descriptionDivHeader.appendChild(exitButton);
+          headerContainer.appendChild(exitButton);
 
           exitButton.onclick = function (event) {
             containerDiv.remove();
