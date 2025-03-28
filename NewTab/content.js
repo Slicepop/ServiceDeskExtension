@@ -748,6 +748,16 @@ function replaceLinks() {
           let isDragging = false;
           let offsetX, offsetY;
 
+          // Set some basic styles for the containerDiv
+          const removeAllContainers = () => {
+            const openContainers = document.querySelectorAll(
+              "div[style*='position: absolute']"
+            );
+            openContainers.forEach((container) => container.remove());
+          };
+
+          incident?.addEventListener("click", removeAllContainers);
+          myTasks?.addEventListener("click", removeAllContainers);
           // Set styles for the main container
           containerDiv.style.position = "absolute";
           containerDiv.style.border = "1px solid #ccc";
