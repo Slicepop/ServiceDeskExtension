@@ -731,8 +731,45 @@ function replaceLinks() {
         pTag.style.cursor = "pointer";
       });
       openContainer.addEventListener("click", () => {
+        let technicians = "";
         // Show description after 3 seconds
         const hoverTimeout = setTimeout(async () => {
+          try {
+            const response = await fetch(
+              `https://support.wmed.edu/LiveTime/services/v1/user/requests/${pTag.textContent.trim()}/layerTechnicians`,
+              {
+                headers: {
+                  accept: "application/json, text/plain, */*",
+                  "accept-language": "en-US,en;q=0.5",
+                  "sec-ch-ua":
+                    '"Not(A:Brand";v="99", "Brave";v="133", "Chromium";v="133"',
+                  "sec-ch-ua-mobile": "?0",
+                  "sec-ch-ua-platform": '"Windows"',
+                  "sec-fetch-dest": "empty",
+                  "sec-fetch-mode": "cors",
+                  "sec-fetch-site": "same-origin",
+                  "sec-gpc": "1",
+                  "zsd-source": "LT",
+                  "content-type": "application/json",
+                },
+                referrer: `https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=${pTag.textContent.trim()}`,
+                referrerPolicy: "strict-origin-when-cross-origin",
+                method: "GET",
+                mode: "cors",
+                credentials: "include",
+              }
+            );
+
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+
+            const data = await response.json();
+            console.log(data);
+            technicians = data;
+          } catch (error) {
+            console.error("Error fetching layer technicians:", error);
+          }
           if (
             Array.from(document.querySelectorAll("#linkToRequest")).some(
               (div) => div.textContent.includes(pTag.textContent.trim())
@@ -930,7 +967,9 @@ function replaceLinks() {
           containerDiv.appendChild(contentContainer);
 
           // Append the main container to the body
+
           document.body.appendChild(containerDiv);
+
           containerDiv.style.width = "35vw";
           containerDiv.style.height = "35vh";
 
@@ -982,6 +1021,95 @@ function replaceLinks() {
             containerDiv.remove();
             document.querySelector("html").style.overflow = "auto";
           };
+          const assign = document.createElement("button");
+          assign.textContent = "Assign";
+          assign.style.cursor = "pointer";
+          assign.style.marginTop = "10px";
+          assign.style.padding = "5px 10px";
+          assign.style.border = "1px solid #ccc";
+          assign.style.borderRadius = "5px";
+          assign.style.backgroundColor = "#007bff";
+          assign.style.color = "white";
+          assign.style.fontSize = "14px";
+          assign.style.marginLeft = "10px";
+          const testSelect = document.createElement("select");
+          testSelect.style.marginTop = "10px";
+          testSelect.style.padding = "5px";
+          testSelect.style.border = "1px solid #ccc";
+          testSelect.style.borderRadius = "5px";
+          testSelect.style.backgroundColor = "#f8f9fa";
+          testSelect.style.color = "#333";
+          testSelect.style.fontSize = "14px";
+          technicians.forEach((tech) => {
+            const option = document.createElement("option");
+            option.value = tech.clientId; // Assuming each technician object has an 'id' property
+            option.textContent = tech.fullName; // Assuming each technician object has a 'name' property
+            testSelect.appendChild(option);
+          });
+          let techID = "";
+          testSelect.addEventListener("change", (e) => {
+            techID = testSelect.value;
+          });
+          assign.onclick = async function () {
+            try {
+              const response = await fetch(
+                "https://support.wmed.edu/LiveTime/services/v1/user/requests/" +
+                  pTag.textContent.trim(),
+                {
+                  headers: {
+                    accept: "application/json, text/plain, */*",
+                    "accept-language": "en-US,en;q=0.5",
+                    "sec-ch-ua":
+                      '"Not(A:Brand";v="99", "Brave";v="133", "Chromium";v="133"',
+                    "sec-ch-ua-mobile": "?0",
+                    "sec-ch-ua-platform": '"Windows"',
+                    "sec-fetch-dest": "empty",
+                    "sec-fetch-mode": "cors",
+                    "sec-fetch-site": "same-origin",
+                    "sec-gpc": "1",
+                    "zsd-source": "LT",
+                    "content-type": "application/json", // Add content-type header
+                  },
+                  referrer:
+                    "https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=" +
+                    pTag.textContent.trim(),
+                  referrerPolicy: "strict-origin-when-cross-origin",
+                  method: "PUT",
+                  mode: "cors",
+                  credentials: "include",
+                  body: JSON.stringify({
+                    // Add the body here
+                    action: "ESCALATE",
+                    technicianId: techID,
+                  }),
+                }
+              );
+
+              // Check if the response is OK (status code in range 200-299)
+              if (!response.ok) {
+                throw new Error("Network response was not ok");
+              }
+
+              let data;
+              try {
+                data = await response.json();
+              } catch (jsonError) {
+                console.warn("Response body is not valid JSON:", jsonError);
+                data = null;
+              }
+              alert("Request successfully assigned!");
+              containerDiv.remove();
+
+              return data;
+            } catch (error) {
+              console.error(error);
+              alert("Failed to assign the request.");
+            }
+          };
+          contentContainer.appendChild(document.createElement("br"));
+          contentContainer.appendChild(testSelect);
+
+          contentContainer.appendChild(assign);
         }, 1);
 
         pTag.addEventListener("mouseout", () => {
@@ -992,6 +1120,7 @@ function replaceLinks() {
         pTag.style.textDecoration = "none";
         pTag.style.cursor = "default";
       });
+
       pTag.onauxclick = function (event) {
         if (event.button === 1) {
           // Check if the middle mouse button was clicked
