@@ -368,11 +368,9 @@ function updateHighlight(resultItems) {
 function selectUser(result) {
   const searchInput = document.getElementById("search");
   searchInput.value = result.fullName;
-  localStorage.setItem("clientId", result.clientId);
-
-  // Dispatch an input event if needed for other logic.
   searchInput.dispatchEvent(new Event("input"));
-
+  localStorage.setItem("clientId", result.clientId);
+  localStorage.setItem("lastSearch", result.fullName);
   addCopyButton(result);
 
   // Automatically focus the subject line after selection.
@@ -399,30 +397,31 @@ button2.forEach((button) => {
   button.onclick = function () {
     var clientId = localStorage.getItem("clientId");
     var subject = localStorage.getItem("subject");
+    if (clientId && subject) {
+      localStorage.removeItem("subject");
+      localStorage.removeItem("lastSearch");
+      localStorage.removeItem("clientId");
 
-    localStorage.removeItem("subject");
-    localStorage.removeItem("lastSearch");
-    localStorage.removeItem("clientId");
-
-    switch (button.textContent) {
-      case "Phone Call":
-        if (clientId && subject) {
+      switch (button.textContent) {
+        case "Phone Call":
           createQuickCall(subject, clientId, 277657);
-        }
-        break;
-      case "Walk-Up":
-        if (clientId && subject) {
+          break;
+        case "Walk-Up":
           createQuickCall(subject, clientId, 277658);
-        }
-        break;
-      case "Teams Message":
-        if (clientId && subject) {
+          break;
+        case "Teams Message":
           createQuickCall(subject, clientId, 277661);
-        }
-        break;
-      default:
-        console.error("Something went wrong");
-        break;
+          break;
+        default:
+          console.error("Something went wrong");
+          break;
+      }
+    } else {
+      const warning = document.createElement("p");
+      warning.textContent =
+        "There was an issue creating the ticket, Please double check your values and submit again.";
+      warning.style.color = "red";
+      document.body.appendChild(warning);
     }
   };
 });

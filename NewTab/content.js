@@ -5,6 +5,10 @@
  * If the current URL includes "New&requestId=", it modifies the behavior of the save button and adds a "Save and Close" button.
  * The "Save and Close" button will close the window after a delay when clicked.
  */
+const script = document.createElement("script");
+script.src = chrome.runtime.getURL("openContainerScript.js"); // Access the resource using chrome.runtime.getURL()
+document.head.appendChild(script);
+
 const incident = document.querySelector(
   "#rightpanel > zsd-user-requestlist > div.row.rowoverride > div.mb-3.col-10 > ul > li:nth-child(2) > span"
 );
@@ -470,6 +474,13 @@ if (!localStorage.getItem("refresh")) {
  * - Marks the original link as processed to avoid duplicate processing.
  */
 requestIdArray = [];
+const requestColors = [
+  "rgb(255, 97, 76)",
+  "rgb(0, 34, 185)",
+  "green",
+  "purple",
+];
+
 const search = document.querySelector("#searchText");
 foo = true;
 function replaceLinks() {
@@ -731,390 +742,17 @@ function replaceLinks() {
         pTag.style.cursor = "pointer";
       });
       openContainer.addEventListener("click", () => {
-        let technicians = "";
-        // Show description after 3 seconds
-        const hoverTimeout = setTimeout(async () => {
-          try {
-            const response = await fetch(
-              `https://support.wmed.edu/LiveTime/services/v1/user/requests/${pTag.textContent.trim()}/layerTechnicians`,
-              {
-                headers: {
-                  accept: "application/json, text/plain, */*",
-                  "accept-language": "en-US,en;q=0.5",
-                  "sec-ch-ua":
-                    '"Not(A:Brand";v="99", "Brave";v="133", "Chromium";v="133"',
-                  "sec-ch-ua-mobile": "?0",
-                  "sec-ch-ua-platform": '"Windows"',
-                  "sec-fetch-dest": "empty",
-                  "sec-fetch-mode": "cors",
-                  "sec-fetch-site": "same-origin",
-                  "sec-gpc": "1",
-                  "zsd-source": "LT",
-                  "content-type": "application/json",
-                },
-                referrer: `https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=${pTag.textContent.trim()}`,
-                referrerPolicy: "strict-origin-when-cross-origin",
-                method: "GET",
-                mode: "cors",
-                credentials: "include",
-              }
-            );
+        const previewsOpen = document.querySelectorAll("#containerDiv");
+        let currColor = previewsOpen.length % requestColors.length;
+        pTag.style.color = requestColors[currColor];
 
-            if (!response.ok) {
-              throw new Error("Network response was not ok");
-            }
-
-            const data = await response.json();
-            console.log(data);
-            technicians = data;
-          } catch (error) {
-            console.error("Error fetching layer technicians:", error);
-          }
-          if (
-            Array.from(document.querySelectorAll("#linkToRequest")).some(
-              (div) => div.textContent.includes(pTag.textContent.trim())
-            )
-          ) {
-            return;
-          }
-
-          const containerDiv = document.createElement("div");
-          const headerContainer = document.createElement("div");
-          const contentContainer = document.createElement("div");
-
-          let isDragging = false;
-          let offsetX, offsetY;
-
-          // Set some basic styles for the containerDiv
-          const removeAllContainers = () => {
-            const openContainers = document.querySelectorAll(
-              "div[style*='position: absolute']"
-            );
-            openContainers.forEach((container) => container.remove());
-          };
-
-          incident?.addEventListener("click", removeAllContainers);
-          myTasks?.addEventListener("click", removeAllContainers);
-          // Set styles for the main container
-          containerDiv.style.position = "absolute";
-          containerDiv.style.border = "1px solid #ccc";
-          containerDiv.style.borderRadius = "10px";
-          containerDiv.style.boxShadow = "0px 4px 8px rgba(0, 0, 0, 0.41)";
-          containerDiv.style.backgroundColor = "#ffff";
-          containerDiv.style.pointerEvents = "all";
-          containerDiv.style.resize = "both";
-          containerDiv.style.overflow = "hidden"; // Ensure content doesn't overflow
-          containerDiv.style.outlineStyle = "solid";
-          containerDiv.style.outlineWidth = ".25px";
-          containerDiv.style.outlineColor = "#63fbf0";
-          containerDiv.style.zIndex = "1";
-
-          // Add event listener to bring the clicked container to the front
-          containerDiv.addEventListener("click", () => {
-            document
-              .querySelectorAll("div[style*='position: absolute']")
-              .forEach((div) => {
-                if (div !== containerDiv) {
-                  div.style.zIndex = "1";
-                }
-              });
-            containerDiv.style.zIndex = "1000";
+        import("./createPreview.js")
+          .then((module) => {
+            module.handlePreview(pTag, requestColors[currColor]);
+          })
+          .catch((error) => {
+            console.error("Error importing createPreview.js:", error);
           });
-
-          // Set styles for the header container
-          headerContainer.style.position = "sticky";
-          headerContainer.style.top = "0";
-          headerContainer.style.left = "0";
-          headerContainer.style.right = "0";
-          headerContainer.style.cursor = "default";
-          headerContainer.style.height = "30px";
-          headerContainer.style.backgroundColor = "gray";
-          headerContainer.style.color = "white";
-          headerContainer.style.display = "flex";
-          headerContainer.style.alignItems = "center";
-          headerContainer.style.padding = "0 10px";
-          headerContainer.style.zIndex = "2";
-
-          const requestDetails = await getItemDetails(pTag.textContent.trim());
-          const subject = document.createElement("h8");
-          subject.textContent = requestDetails.subject;
-          subject.style.flex = "1";
-          subject.style.maxWidth = "calc(100% - 100px)";
-          subject.style.color = "#63fbf0";
-          subject.style.overflow = "hidden";
-          subject.style.textOverflow = "ellipsis";
-          subject.style.whiteSpace = "nowrap";
-          subject.style.textAlign = "center";
-          subject.style.display = "flex";
-          subject.style.alignItems = "center";
-          subject.style.justifyContent = "center";
-
-          const linkToRequest = document.createElement("a");
-          linkToRequest.id = "linkToRequest";
-          linkToRequest.href = `https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=${pTag.textContent.trim()}`;
-          linkToRequest.textContent = pTag.textContent.trim();
-          linkToRequest.target = "_blank";
-          headerContainer.appendChild(linkToRequest);
-          headerContainer.appendChild(subject);
-
-          let originalPosition = {
-            top: containerDiv.style.top,
-            left: containerDiv.style.left,
-          };
-
-          headerContainer.ondblclick = () => {
-            if (containerDiv.style.position === "absolute") {
-              originalPosition = {
-                top: containerDiv.style.top,
-                left: containerDiv.style.left,
-              };
-              containerDiv.style.position = "fixed";
-              containerDiv.style.top = "0";
-              containerDiv.style.left = "0";
-              containerDiv.style.width = "100vw";
-              containerDiv.style.height = "100vh";
-              containerDiv.style.zIndex = "1000";
-              containerDiv.style.resize = "none";
-              containerDiv.style.overflow = "auto";
-              containerDiv.style.borderRadius = "0";
-              document.querySelector("html").style.overflow = "hidden";
-            } else {
-              containerDiv.style.position = "absolute";
-              containerDiv.style.width = "35vw";
-              containerDiv.style.height = "35vh";
-              containerDiv.style.resize = "both";
-              containerDiv.style.borderRadius = "10px";
-              containerDiv.style.zIndex = "3";
-            }
-          };
-
-          headerContainer.addEventListener("mousedown", (event) => {
-            event.preventDefault();
-            if (
-              containerDiv.style.position === "fixed" &&
-              event.target != exitButton &&
-              event.target != linkToRequest
-            ) {
-              containerDiv.style.position = "absolute";
-              containerDiv.style.left = event.clientX - offsetX + "px";
-              containerDiv.style.top = event.clientY - offsetY + "px";
-              containerDiv.style.width = "35vw";
-              containerDiv.style.height = "35vh";
-              containerDiv.style.resize = "both";
-              containerDiv.style.borderRadius = "10px";
-              document.querySelector("html").style.overflow = "auto";
-            }
-
-            isDragging = true;
-            offsetX = event.clientX - containerDiv.offsetLeft;
-            offsetY = event.clientY - containerDiv.offsetTop;
-            containerDiv.style.zIndex = "1000";
-          });
-
-          document.addEventListener("mousemove", (event) => {
-            if (isDragging) {
-              let newLeft = event.clientX - offsetX;
-              let newTop = event.clientY - offsetY;
-
-              switch (true) {
-                case newTop < 0 && newLeft < 0:
-                  newTop = 0;
-                  newLeft = 0;
-                  break;
-                case newTop < 0 &&
-                  newLeft >
-                    document.documentElement.clientWidth -
-                      containerDiv.offsetWidth:
-                  newTop = 0;
-                  newLeft =
-                    document.documentElement.clientWidth -
-                    containerDiv.offsetWidth;
-                case newTop < 0:
-                  newTop = 0;
-                  break;
-                case newLeft < 0:
-                  newLeft = 0;
-                  break;
-                case newLeft >
-                  document.documentElement.clientWidth -
-                    containerDiv.offsetWidth:
-                  newLeft =
-                    document.documentElement.clientWidth -
-                    containerDiv.offsetWidth;
-                  break;
-              }
-              containerDiv.style.zIndex = "1000";
-
-              containerDiv.style.left = newLeft + "px";
-              containerDiv.style.top = newTop + "px";
-            }
-          });
-
-          document.addEventListener("mouseup", () => {
-            isDragging = false;
-            containerDiv.style.zIndex = "1";
-          });
-
-          // Set styles for the content container
-          contentContainer.style.padding = "5px";
-          contentContainer.style.overflow = "auto";
-          contentContainer.style.whiteSpace = "pre-wrap";
-          contentContainer.style.height = "calc(100% - 30px)"; // Adjust height to exclude header height
-          containerDiv.style.minWidth = "50px";
-          containerDiv.style.minHeight = "50px";
-          // Append the header and content containers to the main container
-          containerDiv.appendChild(headerContainer);
-          containerDiv.appendChild(contentContainer);
-
-          // Append the main container to the body
-
-          document.body.appendChild(containerDiv);
-
-          containerDiv.style.width = "35vw";
-          containerDiv.style.height = "35vh";
-
-          // Add content to the content container
-          contentContainer.appendChild(await getNotes(pTag.textContent.trim()));
-          contentContainer.innerHTML += "<hr>" + requestDetails.description;
-
-          // Add toggle functionality for notes
-          const noteToggles = contentContainer.querySelectorAll("#noteToggle");
-          noteToggles.forEach((toggle) => {
-            toggle.onclick = function () {
-              const noteDiv = toggle.parentElement.nextElementSibling;
-              if (noteDiv.style.display === "none") {
-                toggle.innerHTML =
-                  '<span style="color: #63fbf0;">▲</span><span style="color: grey;">  |</span>';
-                noteDiv.style.display = "block";
-              } else {
-                toggle.innerHTML =
-                  '<span style="color: #63fbf0;">▼</span><span style="color: grey;">  |</span>';
-                noteDiv.style.display = "none";
-              }
-            };
-          });
-
-          // Position the containerDiv near the pTag
-          const rect = pTag.getBoundingClientRect();
-          containerDiv.style.top = `${rect.bottom + window.scrollY}px`;
-          containerDiv.style.left = `${rect.left + window.scrollX}px`;
-
-          // Add a close button to the header
-          const exitButton = document.createElement("p");
-          exitButton.textContent = "❌";
-          exitButton.title = "Close";
-          exitButton.style.scale = "1.25";
-          exitButton.style.color = "red";
-          exitButton.style.position = "absolute";
-          exitButton.style.top = "0px";
-          exitButton.style.right = "15px";
-          exitButton.style.backgroundColor = "transparent";
-          exitButton.style.color = "white";
-          exitButton.style.border = "none";
-          exitButton.style.borderRadius = "50%";
-          exitButton.style.width = "20px";
-          exitButton.style.height = "20px";
-          exitButton.style.cursor = "pointer";
-          headerContainer.appendChild(exitButton);
-
-          exitButton.onclick = function (event) {
-            containerDiv.remove();
-            document.querySelector("html").style.overflow = "auto";
-          };
-          const assign = document.createElement("button");
-          assign.textContent = "Assign";
-          assign.style.cursor = "pointer";
-          assign.style.marginTop = "10px";
-          assign.style.padding = "5px 10px";
-          assign.style.border = "1px solid #ccc";
-          assign.style.borderRadius = "5px";
-          assign.style.backgroundColor = "#007bff";
-          assign.style.color = "white";
-          assign.style.fontSize = "14px";
-          assign.style.marginLeft = "10px";
-          const testSelect = document.createElement("select");
-          testSelect.style.marginTop = "10px";
-          testSelect.style.padding = "5px";
-          testSelect.style.border = "1px solid #ccc";
-          testSelect.style.borderRadius = "5px";
-          testSelect.style.backgroundColor = "#f8f9fa";
-          testSelect.style.color = "#333";
-          testSelect.style.fontSize = "14px";
-          technicians.forEach((tech) => {
-            const option = document.createElement("option");
-            option.value = tech.clientId; // Assuming each technician object has an 'id' property
-            option.textContent = tech.fullName; // Assuming each technician object has a 'name' property
-            testSelect.appendChild(option);
-          });
-          let techID = "";
-          testSelect.addEventListener("change", (e) => {
-            techID = testSelect.value;
-          });
-          assign.onclick = async function () {
-            try {
-              const response = await fetch(
-                "https://support.wmed.edu/LiveTime/services/v1/user/requests/" +
-                  pTag.textContent.trim(),
-                {
-                  headers: {
-                    accept: "application/json, text/plain, */*",
-                    "accept-language": "en-US,en;q=0.5",
-                    "sec-ch-ua":
-                      '"Not(A:Brand";v="99", "Brave";v="133", "Chromium";v="133"',
-                    "sec-ch-ua-mobile": "?0",
-                    "sec-ch-ua-platform": '"Windows"',
-                    "sec-fetch-dest": "empty",
-                    "sec-fetch-mode": "cors",
-                    "sec-fetch-site": "same-origin",
-                    "sec-gpc": "1",
-                    "zsd-source": "LT",
-                    "content-type": "application/json", // Add content-type header
-                  },
-                  referrer:
-                    "https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=" +
-                    pTag.textContent.trim(),
-                  referrerPolicy: "strict-origin-when-cross-origin",
-                  method: "PUT",
-                  mode: "cors",
-                  credentials: "include",
-                  body: JSON.stringify({
-                    // Add the body here
-                    action: "ESCALATE",
-                    technicianId: techID,
-                  }),
-                }
-              );
-
-              // Check if the response is OK (status code in range 200-299)
-              if (!response.ok) {
-                throw new Error("Network response was not ok");
-              }
-
-              let data;
-              try {
-                data = await response.json();
-              } catch (jsonError) {
-                console.warn("Response body is not valid JSON:", jsonError);
-                data = null;
-              }
-              alert("Request successfully assigned!");
-              containerDiv.remove();
-
-              return data;
-            } catch (error) {
-              console.error(error);
-              alert("Failed to assign the request.");
-            }
-          };
-          contentContainer.appendChild(document.createElement("br"));
-          contentContainer.appendChild(testSelect);
-
-          contentContainer.appendChild(assign);
-        }, 1);
-
-        pTag.addEventListener("mouseout", () => {
-          clearTimeout(hoverTimeout);
-        });
       });
       pTag.addEventListener("mouseout", () => {
         pTag.style.textDecoration = "none";
@@ -1231,7 +869,7 @@ async function getNotes(requestID) {
   } catch (error) {
     console.log(error);
   }
-  NotesContainer = document.createElement("div");
+  const NotesContainer = document.createElement("div");
   console.log(objectOfNotes);
   for (const [key, value] of Object.entries(objectOfNotes)) {
     if (value.notetext) {
