@@ -487,6 +487,9 @@ function replaceLinks() {
   const links = document.querySelectorAll('a[id^="requestId"]');
   links.forEach((link) => {
     if (!link.dataset.processed) {
+      if (link.textContent.includes("Group")) {
+        return;
+      }
       const listItems = document.querySelectorAll(".accordion-toggle");
       listItems.forEach((item, index) => {
         if (incident.className != "selectedtab") {
