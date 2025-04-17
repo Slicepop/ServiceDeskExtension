@@ -1,9 +1,8 @@
 // "the greatest extension not in the app store - wmed employee" - Richard Graziano
 //TODO
-
 /**
- * If the current URL includes "New&requestId=", it modifies the behavior of the save button and adds a "Save and Close" button.
- * The "Save and Close" button will close the window after a delay when clicked.
+ * Make the reassign and change status options in preview work
+ *
  */
 const script = document.createElement("script");
 script.src = chrome.runtime.getURL("openContainerScript.js"); // Access the resource using chrome.runtime.getURL()
@@ -480,7 +479,7 @@ const requestColors = [
   "green",
   "purple",
 ];
-
+requestColors.sort(() => Math.random() - 0.5);
 const search = document.querySelector("#searchText");
 foo = true;
 function replaceLinks() {
