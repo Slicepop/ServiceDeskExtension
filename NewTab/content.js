@@ -699,7 +699,13 @@ function replaceLinks() {
           item.style.backgroundColor = "#f0f0f0";
         }
       });
-      const pTag = document.createElement("p");
+      const newLink = document.createElement("a");
+      newLink.textContent = link.textContent;
+      newLink.href = `https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=${link.textContent.trim()}`;
+      newLink.target = "_blank";
+      link.parentNode.replaceChild(newLink, link);
+      if (newLink.parentElement.querySelector("img")) return;
+
       var openContainer = document.createElement("img");
       try {
         openContainer.src = chrome.runtime.getURL("./open.png");
@@ -726,65 +732,37 @@ function replaceLinks() {
       openContainer.style.marginRight = "10px";
       openContainer.style.float = "right";
 
-      pTag.textContent = link.textContent;
-      pTag.style.color = "#07ada1";
-      pTag.id = "requestId";
+      newLink.textContent = link.textContent;
+      newLink.style.color = "#07ada1";
+      newLink.id = "requestId";
 
-      pTag.style.margin = "0";
-      pTag.style.padding = "0";
-      pTag.style.boxSizing = "border-box";
-      pTag.style.cursor = "pointer";
-      pTag.style.textDecoration = "none";
-      pTag.style.display = "inline";
-      pTag.style.marginRight = "10px";
-      pTag.style.backgroundColor = "rgba(255, 255, 255, 0)";
-      pTag.style.borderRadius = "5px";
-      pTag.style.transform = "scale(.85)";
-      pTag.addEventListener("mouseover", () => {
-        pTag.style.textDecoration = "underline";
-        pTag.style.cursor = "pointer";
-      });
-      openContainer.addEventListener("click", () => {
+      newLink.style.margin = "0";
+      newLink.style.padding = "0";
+      newLink.style.boxSizing = "border-box";
+      newLink.style.cursor = "pointer";
+      newLink.style.textDecoration = "none";
+      newLink.style.display = "inline";
+      newLink.style.marginRight = "10px";
+      newLink.style.backgroundColor = "rgba(255, 255, 255, 0)";
+      newLink.style.borderRadius = "5px";
+      newLink.style.transform = "scale(.85)";
+
+      openContainer.addEventListener("click", (event) => {
         const previewsOpen = document.querySelectorAll("#containerDiv");
         let currColor = previewsOpen.length % requestColors.length;
-        pTag.style.color = requestColors[currColor];
+        newLink.style.color = requestColors[currColor];
 
         import("./createPreview.js")
           .then((module) => {
-            module.handlePreview(pTag, requestColors[currColor]);
+            module.handlePreview(newLink, requestColors[currColor], event);
           })
           .catch((error) => {
             console.error("Error importing createPreview.js:", error);
           });
       });
-      pTag.addEventListener("mouseout", () => {
-        pTag.style.textDecoration = "none";
-        pTag.style.cursor = "default";
-      });
 
-      pTag.onauxclick = function (event) {
-        if (event.button === 1) {
-          // Check if the middle mouse button was clicked
-          window.open(
-            "https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=" +
-              link.textContent.trim(),
-            "_blank"
-          );
-        }
-      };
-      pTag.onclick = function () {
-        window.open(
-          "https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=" +
-            link.textContent.trim(),
-          "_blank"
-        );
-      };
+      newLink.parentElement.appendChild(openContainer);
 
-      link.parentNode.replaceChild(pTag, link);
-
-      if (pTag.parentElement) {
-        pTag.parentElement.appendChild(openContainer);
-      }
       link.dataset.processed = "true";
     }
   });

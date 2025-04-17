@@ -1,10 +1,10 @@
-export function handlePreview(pTag, color) {
+export function handlePreview(newLink, color, e) {
   let technicians = "";
   // Show description after 3 seconds
   const hoverTimeout = setTimeout(async () => {
     try {
       const response = await fetch(
-        `https://support.wmed.edu/LiveTime/services/v1/user/requests/${pTag.textContent.trim()}/layerTechnicians`,
+        `https://support.wmed.edu/LiveTime/services/v1/user/requests/${newLink.textContent.trim()}/layerTechnicians`,
         {
           headers: {
             accept: "application/json, text/plain, */*",
@@ -20,7 +20,7 @@ export function handlePreview(pTag, color) {
             "zsd-source": "LT",
             "content-type": "application/json",
           },
-          referrer: `https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=${pTag.textContent.trim()}`,
+          referrer: `https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=${newLink.textContent.trim()}`,
           referrerPolicy: "strict-origin-when-cross-origin",
           method: "GET",
           mode: "cors",
@@ -41,7 +41,7 @@ export function handlePreview(pTag, color) {
     let availableStatuses = null;
     try {
       const response = await fetch(
-        `https://support.wmed.edu/LiveTime/services/v1/user/requests/${pTag.textContent.trim()}/statuses`,
+        `https://support.wmed.edu/LiveTime/services/v1/user/requests/${newLink.textContent.trim()}/statuses`,
         {
           headers: {
             accept: "application/json, text/plain, */*",
@@ -57,7 +57,7 @@ export function handlePreview(pTag, color) {
             "zsd-source": "LT",
             "content-type": "application/json",
           },
-          referrer: `https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=${pTag.textContent.trim()}`,
+          referrer: `https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=${newLink.textContent.trim()}`,
           referrerPolicy: "strict-origin-when-cross-origin",
           method: "GET",
           mode: "cors",
@@ -78,7 +78,7 @@ export function handlePreview(pTag, color) {
 
     if (
       Array.from(document.querySelectorAll("#linkToRequest")).some((div) =>
-        div.textContent.includes(pTag.textContent.trim())
+        div.textContent.includes(newLink.textContent.trim())
       )
     ) {
       return;
@@ -142,7 +142,7 @@ export function handlePreview(pTag, color) {
     headerContainer.style.padding = "0 10px";
     headerContainer.style.zIndex = "2";
 
-    const requestDetails = await getItemDetails(pTag.textContent.trim());
+    const requestDetails = await getItemDetails(newLink.textContent.trim());
     const subject = document.createElement("h8");
     subject.textContent = requestDetails.subject;
     subject.style.flex = "1";
@@ -158,8 +158,8 @@ export function handlePreview(pTag, color) {
 
     const linkToRequest = document.createElement("a");
     linkToRequest.id = "linkToRequest";
-    linkToRequest.href = `https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=${pTag.textContent.trim()}`;
-    linkToRequest.textContent = pTag.textContent.trim();
+    linkToRequest.href = `https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=${newLink.textContent.trim()}`;
+    linkToRequest.textContent = newLink.textContent.trim();
     linkToRequest.target = "_blank";
     linkToRequest.style.color = color;
     headerContainer.appendChild(linkToRequest);
@@ -279,12 +279,13 @@ export function handlePreview(pTag, color) {
     // Append the main container to the body
 
     document.body.appendChild(containerDiv);
-
+    containerDiv.style.top = `${e.pageY}px`;
+    containerDiv.style.left = `${e.pageX - 80}px`;
     containerDiv.style.width = "35vw";
     containerDiv.style.height = "35vh";
 
     // Add content to the content container
-    contentContainer.appendChild(await getNotes(pTag.textContent.trim()));
+    contentContainer.appendChild(await getNotes(newLink.textContent.trim()));
     contentContainer.innerHTML += "<hr>" + requestDetails.description;
 
     // Add toggle functionality for notes
@@ -304,10 +305,7 @@ export function handlePreview(pTag, color) {
       };
     });
 
-    // Position the containerDiv near the pTag
-    const rect = pTag.getBoundingClientRect();
-    containerDiv.style.top = `${rect.bottom + window.scrollY}px`;
-    containerDiv.style.left = `${rect.left + window.scrollX}px`;
+    // Position the containerDiv near the newLink
     const menuBtn = document.createElement("p");
     menuBtn.textContent = "☰";
     menuBtn.style.float = "right";
@@ -336,7 +334,7 @@ export function handlePreview(pTag, color) {
     headerContainer.appendChild(exitButton);
 
     exitButton.onclick = function (event) {
-      pTag.style.color = "#63fbf0";
+      newLink.style.color = "#63fbf0";
       containerDiv.remove();
       document.querySelector("html").style.overflow = "auto";
     };
@@ -374,7 +372,7 @@ export function handlePreview(pTag, color) {
     assign.onclick = async function () {
       try {
         const response = await fetch(
-          `https://support.wmed.edu/LiveTime/services/v1/user/requests/${pTag.textContent.trim()}/update`,
+          `https://support.wmed.edu/LiveTime/services/v1/user/requests/${newLink.textContent.trim()}/update`,
           {
             headers: {
               accept: "application/json, text/plain, */*",
@@ -390,7 +388,7 @@ export function handlePreview(pTag, color) {
               "zsd-source": "LT",
               "content-type": "application/json", // Add content-type header
             },
-            referrer: `https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=${pTag.textContent.trim()}`,
+            referrer: `https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=${newLink.textContent.trim()}`,
             referrerPolicy: "strict-origin-when-cross-origin",
             method: "PUT",
             mode: "cors",
@@ -456,7 +454,7 @@ export function handlePreview(pTag, color) {
     updateStatus.onclick = async function () {
       try {
         const response = await fetch(
-          `https://support.wmed.edu/LiveTime/services/v1/user/requests/${pTag.textContent.trim()}/itemstatus`,
+          `https://support.wmed.edu/LiveTime/services/v1/user/requests/${newLink.textContent.trim()}/itemstatus`,
           {
             method: "PUT",
             headers: {
@@ -474,10 +472,10 @@ export function handlePreview(pTag, color) {
               "content-type": "application/json",
             },
             body: JSON.stringify({
-              requestId: pTag.textContent.trim(),
+              requestId: newLink.textContent.trim(),
               itemStatusId: parseInt(statusSelect.value, 10),
             }),
-            referrer: `https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=${pTag.textContent.trim()}`,
+            referrer: `https://support.wmed.edu/LiveTime/WebObjects/LiveTime.woa/wa/LookupRequest?sourceId=New&requestId=${newLink.textContent.trim()}`,
             referrerPolicy: "strict-origin-when-cross-origin",
             mode: "cors",
             credentials: "include",
@@ -543,7 +541,7 @@ export function handlePreview(pTag, color) {
     }
   }, 1);
 
-  pTag.addEventListener("mouseout", () => {
+  newLink.addEventListener("mouseout", () => {
     clearTimeout(hoverTimeout);
   });
 }
