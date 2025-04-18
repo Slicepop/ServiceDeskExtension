@@ -1,4 +1,4 @@
-export function handlePreview(newLink, color, e) {
+function handlePreview(newLink, color, e) {
   let technicians = "";
   // Show description after 3 seconds
   const hoverTimeout = setTimeout(async () => {

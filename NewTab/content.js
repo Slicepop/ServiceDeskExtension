@@ -751,13 +751,7 @@ function replaceLinks() {
         let currColor = previewsOpen.length % requestColors.length;
         newLink.style.color = requestColors[currColor];
 
-        import("./createPreview.js")
-          .then((module) => {
-            module.handlePreview(newLink, requestColors[currColor], event);
-          })
-          .catch((error) => {
-            console.error("Error importing createPreview.js:", error);
-          });
+        handlePreview(newLink, requestColors[currColor], event);
       });
 
       newLink.parentElement.appendChild(openContainer);

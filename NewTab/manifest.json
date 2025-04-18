@@ -28,7 +28,7 @@
   "content_scripts": [
     {
       "matches": ["https://support.wmed.edu/LiveTime/WebObjects/*"],
-      "js": ["createPreview.js", "content.js"],
+      "js": ["content.js", "createPreview.js"],
       "type": "module",
       "run_at": "document_idle"
     }
