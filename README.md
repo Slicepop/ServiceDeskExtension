@@ -1,5 +1,7 @@
 # ServiceDeskExtension
 
+**This Repo is now deprecated, please install the refactored extension at [ServiceDeskExtension_Refactor](https://github.com/Slicepop/ServiceDeskExtension_Refactor/)**
+
 ### **Installation Instructions**
 
 1. Clone the repository to your local machine.
